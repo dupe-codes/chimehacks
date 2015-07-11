@@ -1,6 +1,7 @@
 package chimehack.abuseprevention;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,8 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.action_settings:
                 Log.d("MainActivity", "Settings");
+                Intent settingsIntent = new Intent(this, NormalSettingActivity.class);
+                startActivity(settingsIntent);
                 return true;
             default:
                 return false;
