@@ -32,6 +32,9 @@ public class MainActivity extends Activity {
             case R.id.action_add_task:
                 Log.d("MainActivity", "Add a new task");
                 return true;
+            case R.id.action_settings:
+                Log.d("MainActivity", "Settings");
+                return true;
             default:
                 return false;
         }
