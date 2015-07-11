@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference android:key="pref font_size" android:defaultValue="Normal" android:title="Font size" android:summary="Sets the app's font size."/>
-
+    <EditTextPreference android:title="Checkbox Location" android:defaultValue="Right"/>
+    <EditTextPreference android:title="Font Size" android:key="pref font_size" android:defaultValue="Normal" android:summary="Sets the app's font size."/>
+    <EditTextPreference android:title="Theme" android:defaultValue="Default Theme"/>
 
 </PreferenceScreen>
