@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="Right"
+        android:title="Checkbox Location" />
+    <EditTextPreference
+        android:defaultValue="Normal"
+        android:key="pref font_size"
+        android:summary="Sets the app's font size."
+        android:title="Font Size" />
+    <EditTextPreference
+        android:defaultValue="Default Theme"
+        android:title="Theme" />
+
+</PreferenceScreen>
