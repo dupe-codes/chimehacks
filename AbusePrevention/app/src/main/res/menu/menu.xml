@@ -5,7 +5,7 @@
         android:icon="@android:drawable/ic_menu_add"
         android:title="Add Task" />
 
-    <item android:showAsAction="always" android:title="Settings" />
+    <item android:id="@+id/action_settings" android:showAsAction="always" android:title="Settings" />
 
 
 </menu>
