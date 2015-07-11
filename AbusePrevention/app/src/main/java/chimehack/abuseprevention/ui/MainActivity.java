@@ -47,7 +47,6 @@ public class MainActivity extends Activity {
                         Log.d("MainActivity", inputField.getText().toString());
                     }
                 });
-
                 builder.setNegativeButton("Cancel", null);
                 builder.create().show();
                 return true;
