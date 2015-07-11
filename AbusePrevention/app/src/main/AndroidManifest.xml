@@ -24,6 +24,12 @@
             android:name=".ui.AdvancedPrefsActivity"
             android:label="@string/prefs" />
 
+        <receiver android:name=".service.AutoStartBroadcastReceiver">
+            <intent-filter>
+                <action android:name="ANDROID.INTENT.ACTION.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".service.ChimeService"
             android:enabled="true"
