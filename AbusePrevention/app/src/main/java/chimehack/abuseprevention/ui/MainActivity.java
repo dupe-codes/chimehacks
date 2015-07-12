@@ -117,7 +117,6 @@ public class MainActivity extends Activity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String task = inputField.getText().toString();
                         Log.d("MainActivity", task);
-
                         JSONObject newTodo = new JSONObject();
                         try {
                             newTodo.put("task", task);

@@ -10,31 +10,18 @@ import android.util.Log;
 
 import chimehack.abuseprevention.R;
 
-public class PrefsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class PrefsActivity extends PreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("pref_advanced")) {
-            startActivity(new Intent(this, AdvancedPrefsActivity.class));
-        } else if (key.equals("pref_checkbox")) {
-            Preference connectionPref = findPreference(key);
-            connectionPref.setSummary(sharedPreferences.getString(key, ""));
-            Log.d("PrefsActivity", sharedPreferences.getString(key, ""));
-        } else if (key.equals("pref_font")) {
-            Preference connectionPref = findPreference(key);
-            connectionPref.setSummary(sharedPreferences.getString(key, ""));
-        } else if (key.equals("pref_theme")) {
-            Preference connectionPref = findPreference(key);
-            connectionPref.setSummary(sharedPreferences.getString(key, ""));
-        } else if (key.equals("pref_max_items")) {
-            Preference connectionPref = findPreference(key);
-            connectionPref.setSummary(sharedPreferences.getString(key, ""));
-        }
+        findPreference("pref_advanced").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(PrefsActivity.this, AdvancedPrefsActivity.class));
+                return true;
+            }
+        });
     }
 }
