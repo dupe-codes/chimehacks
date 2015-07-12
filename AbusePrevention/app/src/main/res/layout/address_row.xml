@@ -7,8 +7,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPostalAddress"
-        android:ems="10"
+        android:textSize="30sp"
         android:id="@+id/addressField"
         android:layout_gravity="center_horizontal"
-        android:text="(address)" />
+        android:text="(some address)"
+        android:labelFor="@+id/addressField"/>
 </LinearLayout>
