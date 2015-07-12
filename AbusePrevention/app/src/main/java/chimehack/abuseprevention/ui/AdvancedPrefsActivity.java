@@ -1,5 +1,6 @@
 package chimehack.abuseprevention.ui;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
@@ -26,8 +27,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import org.apache.http.auth.AuthSchemeRegistry;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +43,10 @@ public class AdvancedPrefsActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            getActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         bindService(new Intent(this, ChimeService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
@@ -146,12 +149,14 @@ public class AdvancedPrefsActivity extends ListActivity {
                             Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can call");
                             allowCalling = true;
                         }
-                        Config.EmergencyContact newContact = new Config.EmergencyContact(contactName, contactNum);
+                        Config.EmergencyContact newContact =
+                                new Config.EmergencyContact(contactName, contactNum);
                         newContact.canText = allowTexting;
                         newContact.canCall = allowCalling;
                         mConfig.addEmergencyContact(newContact);
                         mBinder.updateConfig(mConfig);
-                        ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+                        setListAdapter(new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
+                                mConfig));
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -159,6 +164,16 @@ public class AdvancedPrefsActivity extends ListActivity {
                 break;
             default:
                 // Nothing to see here
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mIsBound) {
+            unbindService(mServiceConnection);
+            mServiceConnection = null;
+            mIsBound = false;
         }
     }
 

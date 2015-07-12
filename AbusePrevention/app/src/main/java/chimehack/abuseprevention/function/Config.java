@@ -27,6 +27,22 @@ public class Config {
             this.name = name;
             this.phoneNumber = phoneNumber;
         }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getPhoneNumber() {
+            return phoneNumber;
+        }
+
+        public boolean getCanText() {
+            return canText;
+        }
+
+        public boolean getCanCall() {
+            return canCall;
+        }
     }
 
     public static class Statement {

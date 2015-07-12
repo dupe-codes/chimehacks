@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:background="@android:color/white"
+    android:orientation="horizontal"
+    android:padding="6dp">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -15,6 +17,8 @@
             android:id="@+id/contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
             android:textStyle="bold"
             tools:text="Oleg Vaskevich" />
 
@@ -22,21 +26,25 @@
             android:id="@+id/contact_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
             tools:text="(123) 456-7890" />
     </LinearLayout>
 
     <ToggleButton
         android:id="@+id/contact_can_call"
         style="@style/CanCallToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"/>
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="10dp"
+        android:checked="false"
+        tools:ignore="RtlHardcoded" />
 
     <ToggleButton
         android:id="@+id/contact_can_message"
         style="@style/CanMessageToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"/>
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:checked="false" />
 
 </LinearLayout>
