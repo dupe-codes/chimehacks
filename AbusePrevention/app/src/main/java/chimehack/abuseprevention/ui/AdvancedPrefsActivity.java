@@ -148,7 +148,9 @@ public class AdvancedPrefsActivity extends ListActivity {
                             newContact.canCall = allowCalling;
                             mConfig.addEmergencyContact(newContact);
                             mBinder.updateConfig(mConfig);
-                            ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+                            AdvancedPrefsAdapter adapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
+                                    mConfig);
+                            setListAdapter(adapter);
                         }
                     });
                     builder.setNegativeButton("Cancel", null);
@@ -174,9 +176,9 @@ public class AdvancedPrefsActivity extends ListActivity {
             mConfig = mBinder.getConfig();
             mIsBound = true;
             // TODO maybe put in some loading thing before?
-            AdvancedPrefsAdapter mAdapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
+            AdvancedPrefsAdapter adapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
                     mConfig);
-            setListAdapter(mAdapter);
+            setListAdapter(adapter);
         }
 
         @Override
@@ -193,7 +195,10 @@ public class AdvancedPrefsActivity extends ListActivity {
             ADD_CONTACT_ROW(R.layout.add_row),
             ACTION_ROW(R.layout.action_row),
             ADD_ACTION_ROW(R.layout.add_row),
-            HEADER_ROW(R.layout.header_row);
+            HEADER_ROW(R.layout.name_header_row);
+//            ADDRESS_HEADER_ROW(R.layout.address_header_row),
+//            CONTACT_HEADER_ROW(R.layout.contact_header_row),
+//            ACTION_HEADER_ROW(R.layout.action_header_row);
 
             int layoutId;
 
@@ -239,18 +244,30 @@ public class AdvancedPrefsActivity extends ListActivity {
         }
 
         private void populate() {
+            mData.add(new Item(RowType.HEADER_ROW, "Name"));
             mData.add(new Item(RowType.NAME_ROW, null));
+            mData.add(new Item(RowType.HEADER_ROW, "Address"));
             mData.add(new Item(RowType.ADDRESS_ROW, null));
             mData.add(new Item(RowType.HEADER_ROW, R.string.header_emergency_contacts));
             for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
                 mData.add(new Item(RowType.CONTACT_ROW, contact));
             }
+//<<<<<<< HEAD
             mData.add(new Item(RowType.ADD_CONTACT_ROW, R.string.add_contact));
             mData.add(new Item(RowType.HEADER_ROW, R.string.header_actions));
             for (Config.Statement statement : mConfig.getStatements()) {
                 mData.add(new Item(RowType.ACTION_ROW, statement));
             }
             mData.add(new Item(RowType.ADD_CONTACT_ROW, R.string.add_action));
+//=======
+//            mData.add(new Item(RowType.CONTACT_HEADER_ROW, null));
+//            mData.add(new Item(RowType.ADD_CONTACT_ROW, null));
+//            for (Config.Statement statement : mConfig.getStatements()) {
+//                mData.add(new Item(RowType.ACTION_ROW, statement));
+//            }
+//            mData.add(new Item(RowType.ACTION_HEADER_ROW, null));
+//            mData.add(new Item(RowType.ADD_ACTION_ROW, null));
+//>>>>>>> contacts stuff
             notifyDataSetInvalidated();
         }
 
@@ -349,7 +366,7 @@ public class AdvancedPrefsActivity extends ListActivity {
                         address.setText(mConfig.getAddress());
                         break;
                     case CONTACT_ROW:
-                        Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(position - 2);
+                        Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(position - 3);
                         TextView contactName = (TextView) convertView.findViewById(R.id.contact_name);
                         contactName.setText(contact.name);
                         TextView contactNumber = (TextView) convertView.findViewById(R.id.contact_phone);
@@ -358,6 +375,8 @@ public class AdvancedPrefsActivity extends ListActivity {
                         convertView.findViewById(R.id.contact_can_message).setActivated(contact.canText);
                         Log.i("TOGGLE CALL", contact.canCall ? "YES" : "NO");
                         Log.i("TOGGLE TEXT", contact.canText ? "YES" : "NO");
+                        Log.i("CONTACT NAME", contact.getName());
+                        Log.i("CONTACT PHONE", contact.getPhoneNumber());
                         break;
                     case ADD_CONTACT_ROW:
                         // No data for this one.
