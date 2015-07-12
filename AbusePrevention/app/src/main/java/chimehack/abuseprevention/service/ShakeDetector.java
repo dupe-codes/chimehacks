@@ -4,6 +4,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.util.FloatMath;
 import android.util.Log;
 
@@ -26,6 +27,24 @@ public class ShakeDetector implements SensorEventListener {
         void onShake(int count);
     }
 
+    public void checkShaking(final int currNumber) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(currNumber < mShakeCount) {
+                    Log.d("ShakeTimer", "More shakes occurred");
+                    checkShaking(mShakeCount);
+                    return;
+                } else {
+                    Log.d("ShakeTimer", "No more shakes occurred, processing triggers...");
+                    mShakeListener.onShake(mShakeCount);
+                    mShakeCount = 0;
+                    return;
+                }
+            }
+        }, 2000);
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
@@ -39,7 +58,6 @@ public class ShakeDetector implements SensorEventListener {
             // gForce close to 1 when no movement
             float gForce = FloatMath.sqrt(gX*gX + gY*gY + gZ*gZ);
             if (gForce > SHAKE_THRESHOLD_GRAVITY) {
-                Log.d("ShakeSensor", "Shake triggered");
                 final long now = System.currentTimeMillis();
 
                 // ignore shake events too close to each other (500ms) FIXME: Do this?
@@ -49,13 +67,18 @@ public class ShakeDetector implements SensorEventListener {
 
                 // Process and reset shake count after 3 seconds of no shakes
                 // FIXME: Does this only process once shaking is done like intended?
-                if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
+                /*if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
                     mShakeListener.onShake(mShakeCount);
                     mShakeCount = 0;
-                }
+                } */
 
                 mShakeTimestamp = now;
                 mShakeCount++;
+
+                if (mShakeCount == 1) {
+                    // Start timer to wait for shakes to stop
+                    checkShaking(mShakeCount);
+                }
             }
         }
     }

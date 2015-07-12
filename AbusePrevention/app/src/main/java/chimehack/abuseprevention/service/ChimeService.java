@@ -72,11 +72,14 @@ public class ChimeService extends Service {
         mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
             @Override
             public void onShake(int count) {
+                Log.d("OnShake", count + " shakes detected, processing triggers...");
                 processTriggers(count);
             }
         });
 
         mSensorMgr.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+
+
     }
 
     public Config getConfig() {
@@ -98,7 +101,9 @@ public class ChimeService extends Service {
     }
 
     private void processTriggers(int shakeCount) {
+
         for(Config.Statement statement : mConfig.getStatements()) {
+            Log.d("processTriggers", "Checking statement...");
             switch(statement.getTrigger()) {
                 case SHAKE_ONCE:
                     if (shakeCount == 1) {
@@ -106,7 +111,7 @@ public class ChimeService extends Service {
                     }
                     break;
                 case SHAKE_THREE_TIMES:
-                    if (shakeCount == 3) {
+                    if (shakeCount >= 3) {
                         launchAction(statement);
                     }
                     break;
@@ -118,6 +123,9 @@ public class ChimeService extends Service {
     }
 
     private void launchAction(Config.Statement statement) {
+        Log.d("launchAction", "Launching action");
+//        return;
+
         switch(statement.getAction()) {
             case CALL_POLICE:
                 // Call da popo

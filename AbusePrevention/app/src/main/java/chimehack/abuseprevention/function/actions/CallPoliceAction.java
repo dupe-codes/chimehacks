@@ -13,7 +13,7 @@ import chimehack.abuseprevention.service.ChimeService;
 public class CallPoliceAction implements Action {
 
     // TODO: provide a way to customize this number.
-    static final String EMERGENCY_NUMBER = "5083531505";
+    static final String EMERGENCY_NUMBER = "9046541952";
 
     @Override
     public void execute(ChimeService service, Config.Statement statement, SharedPreferences prefs) {
