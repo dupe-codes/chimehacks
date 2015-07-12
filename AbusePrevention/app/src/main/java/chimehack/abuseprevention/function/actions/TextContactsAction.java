@@ -19,6 +19,17 @@ public class TextContactsAction implements Action {
         // Map from "ID" <=> "Custom message"
         Map<String, String> customMessages = statement.getOptions();
 
-        smsManager.sendTextMessage();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("This is an automated report from [our app], sent on behalf of Linda Zheng.\n");
+        stringBuilder.append("Home Address: \n");
+        stringBuilder.append("Current estimated coordinates: \n");
+
+        for (Config.EmergencyContact contact : service.getConfig().emergencyContacts) {
+            stringBuilder.append("Please " + (contact.canCall ? "feel free to " : "DO NOT ") + "call me.\n");
+            stringBuilder.append("Please " + (contact.canText ? "feel free to " : "DO NOT ") + "text me.\n");
+            stringBuilder.append("Additional notes from Linda: " + customMessages.get(contact.name));
+            smsManager.sendTextMessage();
+
+        }
     }
 }
