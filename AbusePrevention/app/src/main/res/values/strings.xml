@@ -12,14 +12,14 @@
     <string name="pref_name">name</string>
     <string name="contact_send_message_ok">Sending messages is OK</string>
     <string name="contact_call_ok">Calling back is OK</string>
-    <string name="message_template"><![CDATA[
-%8$s
-Home address: %3$s
-Current estimated coordinates: %4$s
-Please %5$s call me.
-Please %6$s text me.
-Find out more info about domestic abuse: http://goo.gl/RVBHpu
-]]></string>
+
+    <string name="message_template">
+    This is an automated report from %1$s, sent on behalf of %2$s.\n
+    Home address: %3$s\n
+    Current estimated coordinates: %4$s\n
+    Please %5$s call me.\n
+    Please %6$s text me.\n
+    Additional notes from %7$s: %8$s</string>
     <string name="message_template_do">feel free to</string>
     <string name="message_template_do_not">DO NOT</string>
     <string name="header_name">Name</string>

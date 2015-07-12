@@ -1,5 +1,7 @@
 package chimehack.abuseprevention.function.actions;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -26,7 +28,7 @@ public class TextContactsAction implements Action {
             String appName = service.getString(R.string.real_app_name);
             String fullName = service.getConfig().getName();
             String homeAddress = service.getConfig().getAddress();
-            String currentLocation = "TODO";
+            String currentLocation = "40.712784, -74.005941\n"; // TODO
             String canCall = contact.getCanCall() ? service.getString(R.string.message_template_do) :
                     service.getString(R.string.message_template_do_not);
             String canText = contact.getCanCall() ? service.getString(R.string.message_template_do) :
@@ -37,20 +39,11 @@ public class TextContactsAction implements Action {
                     appName, fullName, homeAddress, currentLocation, canCall, canText, firstName,
                     additionalMessage);
             Log.i(Constants.TAG, "Sending text message to : " + contact.getName() + " " + contact.getPhoneNumber() + " " + message);
-            smsManager.sendTextMessage(contact.getPhoneNumber(), null, message, null, null);
-//            smsManager.sendTextMessage(); // TODO (linda)
-//=======
-//        StringBuilder stringBuilder = new StringBuilder();
-//        stringBuilder.append("This is an automated report from [our app], sent on behalf of Linda Zheng.\n");
-//        stringBuilder.append("Home Address: \n");
-//        stringBuilder.append("Current estimated coordinates: \n");
-//
-//        for (Config.EmergencyContact contact : service.getConfig().emergencyContacts) {
-//            stringBuilder.append("Please " + (contact.canCall ? "feel free to " : "DO NOT ") + "call me.\n");
-//            stringBuilder.append("Please " + (contact.canText ? "feel free to " : "DO NOT ") + "text me.\n");
-//            stringBuilder.append("Additional notes from Linda: " + customMessages.get(contact.name));
-//            smsManager.sendTextMessage(contact.phoneNumber, null, stringBuilder.toString(), null, null); // TODO (linda)
-//>>>>>>> finished message sending
+
+//            PendingIntent sentPI;
+//            String SENT = "SMS_SENT";
+//            sentPI = PendingIntent.getBroadcast(this, 0, new Intent(SENT), 0);
+            smsManager.sendMultipartTextMessage(contact.getPhoneNumber(), null, smsManager.divideMessage(message), null, null);
 
         }
     }
