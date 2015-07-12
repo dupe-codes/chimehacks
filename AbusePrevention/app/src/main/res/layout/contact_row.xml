@@ -30,15 +30,13 @@
         style="@style/CanCallToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="false"
-        android:contentDescription="@string/contact_call_ok" />
+        android:checked="false"/>
 
     <ToggleButton
         android:id="@+id/contact_can_message"
         style="@style/CanMessageToggleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="false"
-        android:contentDescription="@string/contact_send_message_ok" />
+        android:checked="false"/>
 
 </LinearLayout>

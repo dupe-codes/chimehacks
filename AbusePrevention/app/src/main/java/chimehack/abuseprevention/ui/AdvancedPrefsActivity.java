@@ -47,9 +47,6 @@ public class AdvancedPrefsActivity extends ListActivity {
 
         bindService(new Intent(this, ChimeService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
-
-        AdvancedPrefsAdapter mAdapter = new AdvancedPrefsAdapter(this, mConfig);
-        setListAdapter(mAdapter);
     }
 
     @Override
@@ -154,6 +151,7 @@ public class AdvancedPrefsActivity extends ListActivity {
                         newContact.canCall = allowCalling;
                         mConfig.addEmergencyContact(newContact);
                         mBinder.updateConfig(mConfig);
+                        ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -170,6 +168,10 @@ public class AdvancedPrefsActivity extends ListActivity {
             mBinder = (ChimeService.LocalBinder) service;
             mConfig = mBinder.getConfig();
             mIsBound = true;
+            // TODO maybe put in some loading thing before?
+            AdvancedPrefsAdapter mAdapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
+                    mConfig);
+            setListAdapter(mAdapter);
         }
 
         @Override

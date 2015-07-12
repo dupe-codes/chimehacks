@@ -33,19 +33,11 @@
 
     <style name="CanCallToggleButton">
         <item name="android:background">
-            <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-                <item android:id="@+android:id/background" android:drawable="@android:color/transparent" />
-                <item android:id="@+android:id/toggle" android:drawable="@drawable/call_toggle" />
-            </layer-list>
         </item>
     </style>
 
     <style name="CanMessageToggleButton">
         <item name="android:background">
-            <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-                <item android:id="@+android:id/background" android:drawable="@android:color/transparent" />
-                <item android:id="@+android:id/toggle" android:drawable="@drawable/text_toggle" />
-            </layer-list>
         </item>
     </style>
 

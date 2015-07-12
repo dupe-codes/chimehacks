@@ -28,7 +28,8 @@
             android:label="@string/prefs" />
         <activity
             android:name=".ui.AdvancedPrefsActivity"
-            android:label="@string/prefs" />
+            android:label="@string/prefs"
+            android:windowSoftInputMode="adjustPan" />
 
         <receiver android:name=".service.AutoStartBroadcastReceiver">
             <intent-filter>
