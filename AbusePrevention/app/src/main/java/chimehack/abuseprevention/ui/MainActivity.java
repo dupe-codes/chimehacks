@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         mTodoList = (ListView) findViewById(R.id.todoList);
 
         try {
-            String content = new Scanner(new File(this.getFilesDir(), "todos3.json")).useDelimiter("\\Z").next();
+            String content = new Scanner(new File(this.getFilesDir(), "todos.json")).useDelimiter("\\Z").next();
             try {
                 JSONArray tasks = new JSONArray(new JSONTokener(content));
                 ArrayList<JSONObject> todos = new ArrayList<JSONObject>();
