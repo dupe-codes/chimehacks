@@ -3,6 +3,7 @@ package chimehack.abuseprevention.ui;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.content.Intent;
+import android.net.Uri;
+import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,12 +49,60 @@ public class AdvancedPrefsActivity extends ListActivity {
             case CONTACT_ROW:
                 break;
             case ADD_CONTACT_ROW:
-                
+                pickFromContacts();
                 break;
             case ACTION_ROW:
                 break;
             case ADD_ACTION_ROW:
                 break;
+        }
+    }
+
+    static final int PICK_CONTACT = 1;
+    private void pickFromContacts() {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, PICK_CONTACT);
+    }
+
+    /**
+     * Grabbing contacts function ripped from StackOverflow #thankshomies
+     */
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+        switch(reqCode) {
+            case PICK_CONTACT:
+                // Handle the contact they picked here
+
+                Uri contactData = data.getData();
+                Cursor c = managedQuery(contactData, null, null, null, null); // Deprecated.. oh well!
+                String id = "";
+                String cNumber = "";
+                String name = "";
+                if (c.moveToFirst()) {
+                    id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+                    Log.d("AdvancedPrefsActivity", "Contacts id is " + id);
+                    String hasPhone = c.getString(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+                    if (hasPhone.equalsIgnoreCase("1")) {
+                        Cursor phones = getContentResolver().query(
+                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
+                                null, null
+                        );
+                        phones.moveToFirst();
+                        cNumber = phones.getString(phones.getColumnIndex("data1"));
+                        Log.d("AdvancedPrefsActivity", "Contacts number is: " + cNumber);
+                    }
+                    name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                    Log.d("AdvancedPrefsActivity", "Contacts name is: " + name);
+                }
+                Config.EmergencyContact newContact = new Config.EmergencyContact(name, cNumber);
+                mConfig.emergencyContacts.add(newContact);
+                //TODO(Oleg) Write new config to preferences
+                break;
+            default:
+                // Nothing to see here
+                return;
         }
     }
 
