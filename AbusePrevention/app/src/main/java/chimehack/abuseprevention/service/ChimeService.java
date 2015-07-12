@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import java.util.HashSet;
 import java.util.Set;
 
+import chimehack.abuseprevention.R;
 import chimehack.abuseprevention.function.Config;
 
 /**
@@ -30,8 +31,8 @@ public class ChimeService extends Service {
      * Class that we can give to activities in order to interact with the service.
      */
     public class LocalBinder extends Binder {
-        void notifySettingsUpdated() {
-            readPrefs();
+        void updateSettings() {
+            mConfig = getConfigFromPrefs();
         }
     }
 
@@ -41,11 +42,11 @@ public class ChimeService extends Service {
 
         // Initialize.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        readPrefs();
+        mConfig = getConfigFromPrefs();
     }
 
-    private void readPrefs() {
-//        mGson.fromJson("", Config.class);
+    private Config getConfigFromPrefs() {
+        return mGson.fromJson(getString(R.string.pref_config), Config.class);
     }
 
     @Override
