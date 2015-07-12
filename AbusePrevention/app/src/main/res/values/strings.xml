@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">To-do</string>
+    <string name="real_app_name">To-do (not really)</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -7,4 +8,16 @@
     <string name="menu_settings">Settings</string>
     <string name="prefs">Preferences</string>
     <string name="pref_config">config</string>
+    <string name="pref_name">name</string>
+    <string name="contact_send_message_ok">Sending messages is OK</string>
+    <string name="contact_call_ok">Calling back is OK</string>
+    <string name="message_template"><![CDATA[
+This is an automated report from %1$s, sent on behalf of %2$s.
+Home address: %3$s
+Current estimated coordinates: %4$s
+Please %5$s call me.
+Please %6$s text me.
+Additional notes from %7$s: %8$s]]></string>
+    <string name="message_template_do">feel free to</string>
+    <string name="message_template_do_not">DO NOT</string>
 </resources>

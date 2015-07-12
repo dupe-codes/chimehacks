@@ -2,44 +2,51 @@ package chimehack.abuseprevention.ui;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.content.Intent;
-import android.net.Uri;
-import android.database.Cursor;
 import android.widget.ToggleButton;
 
-import org.json.JSONObject;
+import org.apache.http.auth.AuthSchemeRegistry;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import chimehack.abuseprevention.R;
 import chimehack.abuseprevention.function.Config;
+import chimehack.abuseprevention.service.ChimeService;
 
 public class AdvancedPrefsActivity extends ListActivity {
 
-    Config mConfig;
+    private Config mConfig;
+    private ChimeService.LocalBinder mBinder;
+    private boolean mIsBound = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mConfig = getConfig();
+
+        bindService(new Intent(this, ChimeService.class), mServiceConnection,
+                Context.BIND_AUTO_CREATE);
 
         AdvancedPrefsAdapter mAdapter = new AdvancedPrefsAdapter(this, mConfig);
         setListAdapter(mAdapter);
@@ -66,6 +73,7 @@ public class AdvancedPrefsActivity extends ListActivity {
     }
 
     static final int PICK_CONTACT = 1;
+
     private void pickFromContacts() {
         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(intent, PICK_CONTACT);
@@ -77,11 +85,12 @@ public class AdvancedPrefsActivity extends ListActivity {
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
-        switch(reqCode) {
+        switch (reqCode) {
             case PICK_CONTACT:
                 // Handle the contact they picked here
 
                 Uri contactData = data.getData();
+                //noinspection deprecation
                 Cursor c = managedQuery(contactData, null, null, null, null); // Deprecated.. oh well!
                 String cNumber = "";
                 String name = "";
@@ -97,6 +106,7 @@ public class AdvancedPrefsActivity extends ListActivity {
                         );
                         phones.moveToFirst();
                         cNumber = phones.getString(phones.getColumnIndex("data1"));
+                        phones.close();
                         Log.d("AdvancedPrefsActivity", "Contacts number is: " + cNumber);
                     }
                     name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
@@ -142,39 +152,31 @@ public class AdvancedPrefsActivity extends ListActivity {
                         Config.EmergencyContact newContact = new Config.EmergencyContact(contactName, contactNum);
                         newContact.canText = allowTexting;
                         newContact.canCall = allowCalling;
-                        mConfig.emergencyContacts.add(newContact);
-
-                        //TODO(Oleg) Write new config to preferences
+                        mConfig.addEmergencyContact(newContact);
+                        mBinder.updateConfig(mConfig);
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
                 builder.create().show();
-                //TODO(Oleg) Write new config to preferences
                 break;
             default:
                 // Nothing to see here
-                return;
         }
     }
 
-    private Config getConfig() {
-        Set<Config.EmergencyContact> contacts = new HashSet<>();
-        contacts.add(new Config.EmergencyContact("Linda Zheng", "7133675720"));
-        contacts.add(new Config.EmergencyContact("Dawsona Botsford", "1234567890"));
-        contacts.add(new Config.EmergencyContact("Berta Lovejoy", "1234567890"));
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mBinder = (ChimeService.LocalBinder) service;
+            mConfig = mBinder.getConfig();
+            mIsBound = true;
+        }
 
-        Set<Config.Statement> statements = new HashSet<>();
-        Map<String, String> options = new HashMap<>();
-        statements.add(new Config.Statement(
-                Config.Statement.Trigger.SHAKE_ONCE, Config.Statement.Action.CALL_POLICE, options));
-        Map<String, String> options2 = new HashMap<>();
-        options2.put("number", "7897897890");
-        statements.add(new Config.Statement(
-                Config.Statement.Trigger.STOP_STOP_STOP, Config.Statement.Action.CALL_CUSTOM_NUMBER,
-                options2));
-
-        return new Config(contacts, statements);
-    }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mIsBound = false;
+        }
+    };
 
     private static class AdvancedPrefsAdapter extends BaseAdapter {
         private enum RowType {
@@ -214,14 +216,16 @@ public class AdvancedPrefsActivity extends ListActivity {
             }
         }
 
-        private static final int MAX_COUNT = 7;
-
+        private Context mContext;
         private Config mConfig;
         private List<Item> mData = new ArrayList<>();
         private LayoutInflater mInflater;
+        private SharedPreferences mPrefs;
 
         public AdvancedPrefsAdapter(Context context, Config config) {
+            mContext = context;
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
             mConfig = config;
             populate();
         }
@@ -229,11 +233,11 @@ public class AdvancedPrefsActivity extends ListActivity {
         private void populate() {
             mData.add(new Item(RowType.NAME_ROW, null));
             mData.add(new Item(RowType.ADDRESS_ROW, null));
-            for (Config.EmergencyContact contact : mConfig.emergencyContacts) {
+            for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
                 mData.add(new Item(RowType.CONTACT_ROW, contact));
             }
             mData.add(new Item(RowType.ADD_CONTACT_ROW, null));
-            for (Config.Statement statement : mConfig.statements) {
+            for (Config.Statement statement : mConfig.getStatements()) {
                 mData.add(new Item(RowType.ACTION_ROW, statement));
             }
             mData.add(new Item(RowType.ADD_ACTION_ROW, null));
@@ -270,37 +274,69 @@ public class AdvancedPrefsActivity extends ListActivity {
             RowType type = RowType.values()[getItemViewType(position)];
             Log.i("AdvancedPrefs", "getView " + position + " " + convertView + " type = " + type);
 
-
             if (convertView == null) {
+                convertView = mInflater.inflate(type.getLayoutId(), parent, false);
+
                 switch (type) {
                     case NAME_ROW:
-                        convertView = mInflater.inflate(R.layout.name_row, null);
+                        final TextView name = (TextView) convertView.findViewById(R.id.nameField);
+                        name.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                            @Override
+                            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                    mConfig.setName(name.getText().toString());
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+                        name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if (!hasFocus) {
+                                    mConfig.setName(name.getText().toString());
+                                }
+                            }
+                        });
                         break;
                     case ADDRESS_ROW:
-                        convertView = mInflater.inflate(R.layout.address_row, null);
+                        final TextView address = (TextView) convertView.findViewById(R.id.addressField);
+                        address.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                            @Override
+                            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                    mConfig.setAddress(address.getText().toString());
+                                    return true;
+                                }
+                                return false;
+                            }
+                        });
+                        address.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if (!hasFocus) {
+                                    mConfig.setAddress(address.getText().toString());
+                                }
+                            }
+                        });
                         break;
                     case CONTACT_ROW:
-                        convertView = mInflater.inflate(R.layout.contact_row, null);
-                        break;
-                    case ADD_CONTACT_ROW:
-                        convertView = mInflater.inflate(R.layout.add_contact_row, null);
+                        int id = position - 2;
+                        Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(id);
+
                         break;
                     case ACTION_ROW:
-                        convertView = mInflater.inflate(R.layout.action_row, null);
-                        break;
-                    case ADD_ACTION_ROW:
-                        convertView = mInflater.inflate(R.layout.add_action_row, null);
                         break;
                 }
             } else {
                 switch (type) {
                     case NAME_ROW:
                         TextView name = (TextView) convertView.findViewById(R.id.nameField);
-                        name.setText("Linda Zheng");
+                        name.setText(mConfig.getName());
                         break;
                     case ADDRESS_ROW:
                         TextView address = (TextView) convertView.findViewById(R.id.addressField);
-                        address.setText("123 Address Road");
+                        address.setText(mConfig.getAddress());
                         break;
                     case CONTACT_ROW:
                         // TODO(linda)

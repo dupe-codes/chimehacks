@@ -1,7 +1,8 @@
 package chimehack.abuseprevention.function;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import chimehack.abuseprevention.function.actions.CallCustomNumberAction;
 import chimehack.abuseprevention.function.actions.CallPoliceAction;
@@ -92,11 +93,44 @@ public class Config {
         }
     }
 
-    public Set<EmergencyContact> emergencyContacts;
-    public Set<Statement> statements;
+    private final List<EmergencyContact> emergencyContacts;
+    private final List<Statement> statements;
+    private String name;
+    private String address;
 
-    public Config(Set<EmergencyContact> emergencyContacts, Set<Statement> statements) {
+    public Config(List<EmergencyContact> emergencyContacts, List<Statement> statements, String name,
+                  String address) {
         this.emergencyContacts = emergencyContacts;
         this.statements = statements;
+        this.name = name;
+        this.address = address;
+    }
+
+    public List<EmergencyContact> getEmergencyContacts() {
+        return Collections.unmodifiableList(emergencyContacts);
+    }
+
+    public void addEmergencyContact(EmergencyContact contact) {
+        emergencyContacts.add(contact);
+    }
+
+    public List<Statement> getStatements() {
+        return Collections.unmodifiableList(statements);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
