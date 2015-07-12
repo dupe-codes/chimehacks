@@ -219,31 +219,6 @@ public class AdvancedPrefsActivity extends Activity {
                     builder.create().show();
                 }
         }
-
-        if (mListView.findViewById(R.id.contact_can_call) != null) {
-            ((ToggleButton) mListView.findViewById(R.id.contact_can_call)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
-                        if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
-                            contact.setCanCall(isChecked);
-                        }
-                    }
-                }
-            });
-        }
-        if (mListView.findViewById(R.id.contact_can_message) != null) {
-            ((ToggleButton) mListView.findViewById(R.id.contact_can_message)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
-                        if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
-                            contact.setCanText(isChecked);
-                        }
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -284,7 +259,7 @@ public class AdvancedPrefsActivity extends Activity {
 
     void reloadData() {
         AdvancedPrefsAdapter adapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
-                mConfig);
+                mConfig, mBinder);
         mListView.setAdapter(adapter);
     }
 
@@ -335,15 +310,17 @@ public class AdvancedPrefsActivity extends Activity {
 
         private Context mContext;
         private Config mConfig;
+        private ChimeService.LocalBinder mBinder;
         private List<Item> mData = new ArrayList<>();
         private LayoutInflater mInflater;
         private SharedPreferences mPrefs;
 
-        public AdvancedPrefsAdapter(Context context, Config config) {
+        public AdvancedPrefsAdapter(Context context, Config config, ChimeService.LocalBinder binder) {
             mContext = context;
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
             mConfig = config;
+            mBinder = binder;
 
             populate();
         }
@@ -407,6 +384,7 @@ public class AdvancedPrefsActivity extends Activity {
                             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                                     mConfig.setName(name.getText().toString());
+                                    mBinder.updateConfig(mConfig);
                                     return true;
                                 }
                                 return false;
@@ -417,6 +395,7 @@ public class AdvancedPrefsActivity extends Activity {
                             public void onFocusChange(View v, boolean hasFocus) {
                                 if (!hasFocus) {
                                     mConfig.setName(name.getText().toString());
+                                    mBinder.updateConfig(mConfig);
                                 }
                             }
                         });
@@ -428,6 +407,7 @@ public class AdvancedPrefsActivity extends Activity {
                             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                                     mConfig.setAddress(address.getText().toString());
+                                    mBinder.updateConfig(mConfig);
                                     return true;
                                 }
                                 return false;
@@ -438,10 +418,36 @@ public class AdvancedPrefsActivity extends Activity {
                             public void onFocusChange(View v, boolean hasFocus) {
                                 if (!hasFocus) {
                                     mConfig.setAddress(address.getText().toString());
+                                    mBinder.updateConfig(mConfig);
                                 }
                             }
                         });
                         break;
+                    case CONTACT_ROW:
+                        final View finalConvertView1 = convertView;
+                        ((ToggleButton) convertView.findViewById(R.id.contact_can_call)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
+                                    if (contact.getName().equals(((TextView) finalConvertView1.findViewById(R.id.contact_name)).getText())) {
+                                        contact.setCanCall(isChecked);
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                        final View finalConvertView = convertView;
+                        ((ToggleButton) convertView.findViewById(R.id.contact_can_message)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
+                                    if (contact.getName().equals(((TextView) finalConvertView.findViewById(R.id.contact_name)).getText())) {
+                                        contact.setCanText(isChecked);
+                                        break;
+                                    }
+                                }
+                            }
+                        });
                 }
             }
 
@@ -472,9 +478,20 @@ public class AdvancedPrefsActivity extends Activity {
 
                     Log.i("CONTACT NAME", contact.getName());
                     Log.i("CONTACT PHONE", contact.getPhoneNumber());
+
                     break;
                 case ACTION_ROW:
-                    // TODO(linda)
+                    int numContacts = mConfig.getEmergencyContacts().size();
+                    Config.Statement action = mConfig.getStatements().get(position - 7 - numContacts);
+                    TextView actionView = (TextView)convertView.findViewById(R.id.action_message);
+                    Config.Statement.Trigger trigger = action.getTrigger();
+                    String triggerStr = trigger != null ? trigger.toString() : "";
+
+                    Config.Statement.Action response = action.getAction();
+                    String respStr = response != null ? response.toString() : "";
+
+                    String message = "When\n" + triggerStr + "\nDo\n" + respStr;
+                    actionView.setText(message);
                     break;
                 case ADD_ACTION_ROW:
                 case ADD_CONTACT_ROW:

@@ -10,12 +10,16 @@
         android:layout_height="wrap_content"
         android:background="@drawable/white_ripple"
         android:orientation="horizontal"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
         android:padding="6dp">
 
         <ImageView
             android:id="@+id/contact_picture"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:src="@android:drawable/ic_menu_gallery" />
 
         <LinearLayout
@@ -30,7 +34,6 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:textSize="24sp"
-                android:textStyle="bold"
                 tools:text="Oleg Vaskevich" />
 
             <TextView
@@ -45,19 +48,20 @@
         <ToggleButton
             android:id="@+id/contact_can_call"
             style="@style/CanCallToggleButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="6dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp"
             android:checked="false"
             tools:ignore="RtlHardcoded" />
 
         <ToggleButton
             android:id="@+id/contact_can_message"
             style="@style/CanMessageToggleButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="6dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
             android:checked="false" />
 
     </LinearLayout>
