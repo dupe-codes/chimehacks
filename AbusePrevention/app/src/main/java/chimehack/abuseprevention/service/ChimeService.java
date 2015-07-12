@@ -15,6 +15,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import chimehack.abuseprevention.Constants;
@@ -79,7 +80,15 @@ public class ChimeService extends Service {
 
         mSensorMgr.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
 
-
+        HashMap<String, String> opts = new HashMap<String, String>();
+        opts.put("Oleg Vaskevich", "HELP");
+        // Add a statement for testing
+        Config.Statement newStatement = new Config.Statement(
+                Config.Statement.Trigger.SHAKE_ONCE,
+                Config.Statement.Action.TEXT_CONTACTS,
+                opts
+        );
+        mConfig.addStatement(newStatement);
     }
 
     public Config getConfig() {
@@ -124,7 +133,6 @@ public class ChimeService extends Service {
 
     private void launchAction(Config.Statement statement) {
         Log.d("launchAction", "Launching action");
-//        return;
 
         switch(statement.getAction()) {
             case CALL_POLICE:
@@ -133,7 +141,7 @@ public class ChimeService extends Service {
                 callPolice.execute(this, statement, mPrefs);
                 break;
             case CALL_CUSTOM_NUMBER:
-                // Cal dat number
+                // Call dat number
                 CallCustomNumberAction callCustom = new CallCustomNumberAction();
                 callCustom.execute(this, statement, mPrefs);
                 break;
