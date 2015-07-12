@@ -56,16 +56,8 @@ public class AdvancedPrefsActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         switch (AdvancedPrefsAdapter.RowType.values()[getListAdapter().getItemViewType(position)]) {
-            case NAME_ROW:
-                break;
-            case ADDRESS_ROW:
-                break;
-            case CONTACT_ROW:
-                break;
             case ADD_CONTACT_ROW:
                 pickFromContacts();
-                break;
-            case ACTION_ROW:
                 break;
             case ADD_ACTION_ROW:
                 break;
@@ -200,9 +192,10 @@ public class AdvancedPrefsActivity extends ListActivity {
             NAME_ROW(R.layout.name_row),
             ADDRESS_ROW(R.layout.address_row),
             CONTACT_ROW(R.layout.contact_row),
-            ADD_CONTACT_ROW(R.layout.add_contact_row),
+            ADD_CONTACT_ROW(R.layout.add_row),
             ACTION_ROW(R.layout.action_row),
-            ADD_ACTION_ROW(R.layout.add_action_row);
+            ADD_ACTION_ROW(R.layout.add_row),
+            HEADER_ROW(R.layout.header_row);
 
             int layoutId;
 
@@ -250,14 +243,16 @@ public class AdvancedPrefsActivity extends ListActivity {
         private void populate() {
             mData.add(new Item(RowType.NAME_ROW, null));
             mData.add(new Item(RowType.ADDRESS_ROW, null));
+            mData.add(new Item(RowType.HEADER_ROW, R.string.header_emergency_contacts));
             for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
                 mData.add(new Item(RowType.CONTACT_ROW, contact));
             }
-            mData.add(new Item(RowType.ADD_CONTACT_ROW, null));
+            mData.add(new Item(RowType.ADD_CONTACT_ROW, R.string.add_contact));
+            mData.add(new Item(RowType.HEADER_ROW, R.string.header_actions));
             for (Config.Statement statement : mConfig.getStatements()) {
                 mData.add(new Item(RowType.ACTION_ROW, statement));
             }
-            mData.add(new Item(RowType.ADD_ACTION_ROW, null));
+            mData.add(new Item(RowType.ADD_CONTACT_ROW, R.string.add_action));
             notifyDataSetInvalidated();
         }
 
@@ -338,7 +333,7 @@ public class AdvancedPrefsActivity extends ListActivity {
                         });
                         break;
                     case CONTACT_ROW:
-                        int id = position - 2;
+                        int id = position - 3;
                         Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(id);
 
                         break;
@@ -366,6 +361,10 @@ public class AdvancedPrefsActivity extends ListActivity {
                         break;
                     case ADD_ACTION_ROW:
                         // No data for this one.
+                        break;
+                    case HEADER_ROW:
+                        TextView text = (TextView) convertView.findViewById(android.R.id.title);
+                        text.setText((Integer) mData.get(position).getData());
                         break;
                 }
             }

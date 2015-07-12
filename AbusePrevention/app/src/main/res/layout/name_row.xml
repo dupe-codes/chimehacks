@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
+        android:id="@+id/nameField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="Linda Zheng"
+        android:layout_gravity="center_horizontal"
         android:ems="10"
-        android:id="@+id/nameField"
-        android:layout_gravity="center_horizontal" />
+        android:inputType="textPersonName"
+        tools:text="Linda Zheng" />
 </LinearLayout>

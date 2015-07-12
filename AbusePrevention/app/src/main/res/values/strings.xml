@@ -21,4 +21,8 @@ Please %6$s text me.
 Additional notes from %7$s: %8$s]]></string>
     <string name="message_template_do">feel free to</string>
     <string name="message_template_do_not">DO NOT</string>
+    <string name="header_emergency_contacts">Emergency Contacts</string>
+    <string name="header_actions">Actions</string>
+    <string name="add_contact">Add a contact</string>
+    <string name="add_action">Add an action</string>
 </resources>
