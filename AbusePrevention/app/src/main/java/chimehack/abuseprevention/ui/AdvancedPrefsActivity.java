@@ -125,7 +125,7 @@ public class AdvancedPrefsActivity extends ListActivity {
                 canText.setTextOff("Not OK to text me");
                 final ToggleButton canCall = new ToggleButton(this);
                 canCall.setChecked(true);
-                canCall.setText("OK to text me");
+                canCall.setText("OK to call me");
                 canCall.setTextOn("OK to call me");
                 canCall.setTextOff("Not OK to call me");
 
