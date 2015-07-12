@@ -36,7 +36,7 @@ public class TextContactsAction implements Action {
             String message = String.format(service.getString(R.string.message_template),
                     appName, fullName, homeAddress, currentLocation, canCall, canText, firstName,
                     additionalMessage);
-            Log.i(Constants.TAG, "Sending text message: " + message);
+            Log.i(Constants.TAG, "Sending text message to : " + contact.getName() + " " + contact.getPhoneNumber() + " " + message);
             smsManager.sendTextMessage(contact.getPhoneNumber(), null, message, null, null);
 //            smsManager.sendTextMessage(); // TODO (linda)
 //=======
