@@ -78,6 +78,8 @@ public class ChimeService extends Service {
         });
 
         mSensorMgr.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+
+
     }
 
     public Config getConfig() {
@@ -99,7 +101,9 @@ public class ChimeService extends Service {
     }
 
     private void processTriggers(int shakeCount) {
+
         for(Config.Statement statement : mConfig.getStatements()) {
+            Log.d("processTriggers", "Checking statement...");
             switch(statement.getTrigger()) {
                 case SHAKE_ONCE:
                     if (shakeCount == 1) {
@@ -120,8 +124,8 @@ public class ChimeService extends Service {
 
     private void launchAction(Config.Statement statement) {
         Log.d("launchAction", "Launching action");
-        return;
-        /*
+//        return;
+
         switch(statement.getAction()) {
             case CALL_POLICE:
                 // Call da popo
@@ -138,7 +142,7 @@ public class ChimeService extends Service {
                 TextContactsAction textContacts = new TextContactsAction();
                 textContacts.execute(this, statement, mPrefs);
                 break;
-        } */
+        }
     }
 
     @Override
