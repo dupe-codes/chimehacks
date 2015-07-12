@@ -14,8 +14,8 @@
     <string name="contact_call_ok">Calling back is OK</string>
 
     <string name="message_template">
-    <!--%8$s-->
-    Hi, do you mind if you stop by and drop off the tupperware you borrowed?
+    %8$s
+    <!--Hi, do you mind if you stop by and drop off the tupperware you borrowed?-->
     Home address: %3$s\n
     Current estimated coordinates: %4$s\n
     Please %5$s call me.\n
