@@ -45,7 +45,8 @@ public class AdvancedPrefsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
-            getActionBar().setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.advanced_prefs);
         }
 
         bindService(new Intent(this, ChimeService.class), mServiceConnection,
