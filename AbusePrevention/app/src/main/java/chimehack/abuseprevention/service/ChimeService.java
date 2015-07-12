@@ -25,7 +25,6 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import chimehack.abuseprevention.Constants;
 import chimehack.abuseprevention.R;
@@ -161,7 +160,11 @@ public class ChimeService extends Service {
 
     public class UriSerializer implements JsonSerializer<Uri> {
         public JsonElement serialize(Uri src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(src.toString());
+            String string = src.toString();
+            if (TextUtils.isEmpty(string)) {
+                string = "";
+            }
+            return new JsonPrimitive(string);
         }
     }
 
@@ -169,7 +172,12 @@ public class ChimeService extends Service {
         @Override
         public Uri deserialize(final JsonElement src, final Type srcType,
                                final JsonDeserializationContext context) throws JsonParseException {
-            return Uri.parse(src.toString());
+            String string = src.toString();
+            if (!TextUtils.isEmpty(string)) {
+                return Uri.parse(string);
+            } else {
+                return null;
+            }
         }
     }
 }
