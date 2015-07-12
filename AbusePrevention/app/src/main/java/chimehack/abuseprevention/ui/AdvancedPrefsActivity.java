@@ -477,8 +477,14 @@ public class AdvancedPrefsActivity extends Activity {
                     int numContacts = mConfig.getEmergencyContacts().size();
                     Config.Statement action = mConfig.getStatements().get(position - 7 - numContacts);
                     TextView actionView = (TextView)convertView.findViewById(R.id.action_message);
-                    //String message = "When\n" +
+                    Config.Statement.Trigger trigger = action.getTrigger();
+                    String triggerStr = trigger != null ? trigger.toString() : "";
 
+                    Config.Statement.Action response = action.getAction();
+                    String respStr = response != null ? response.toString() : "";
+
+                    String message = "When\n" + triggerStr + "\nDo\n" + respStr;
+                    actionView.setText(message);
                     break;
                 case ADD_ACTION_ROW:
                 case ADD_CONTACT_ROW:
