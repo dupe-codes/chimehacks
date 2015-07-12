@@ -13,5 +13,7 @@
         android:inputType="textPersonName"
         android:labelFor="@+id/nameField"
         android:textSize="24sp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         tools:text="Linda Zheng" />
 </LinearLayout>

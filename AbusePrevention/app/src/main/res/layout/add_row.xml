@@ -6,7 +6,9 @@
     android:background="@drawable/white_ripple"
     android:minHeight="60dp"
     android:orientation="vertical"
-    android:padding="6dp">
+    android:padding="6dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp">
 
     <TextView
         android:id="@android:id/title"
@@ -15,6 +17,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:drawablePadding="12dp"
+        android:paddingLeft="10dp"
         android:drawableStart="@drawable/add"
         android:textColor="@android:color/black"
         android:textSize="18sp"

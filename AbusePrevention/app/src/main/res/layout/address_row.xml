@@ -13,5 +13,7 @@
         android:inputType="textPostalAddress"
         android:labelFor="@+id/addressField"
         android:textSize="25sp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         tools:text="(some address)" />
 </LinearLayout>
