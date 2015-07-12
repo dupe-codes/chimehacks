@@ -25,6 +25,7 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import chimehack.abuseprevention.Constants;
 import chimehack.abuseprevention.R;
@@ -89,8 +90,6 @@ public class ChimeService extends Service {
         });
 
         mSensorMgr.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-
-
     }
 
     public Config getConfig() {
@@ -135,7 +134,6 @@ public class ChimeService extends Service {
 
     private void launchAction(Config.Statement statement) {
         Log.d("launchAction", "Launching action");
-//        return;
 
         switch (statement.getAction()) {
             case CALL_POLICE:
@@ -144,7 +142,7 @@ public class ChimeService extends Service {
                 callPolice.execute(this, statement, mPrefs);
                 break;
             case CALL_CUSTOM_NUMBER:
-                // Cal dat number
+                // Call dat number
                 CallCustomNumberAction callCustom = new CallCustomNumberAction();
                 callCustom.execute(this, statement, mPrefs);
                 break;

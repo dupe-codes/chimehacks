@@ -54,6 +54,14 @@ public class Config {
         public boolean getCanCall() {
             return canCall;
         }
+
+        public void setCanCall(boolean canCall) {
+            this.canCall = canCall;
+        }
+
+        public void setCanText(boolean canText) {
+            this.canText = canText;
+        }
     }
 
     public static class Statement {
@@ -143,6 +151,10 @@ public class Config {
 
     public void addEmergencyContact(EmergencyContact contact) {
         emergencyContacts.add(contact);
+    }
+
+    public void addStatement(Statement statement) {
+        statements.add(statement);
     }
 
     public void removeEmergencyContact(int contactId) {

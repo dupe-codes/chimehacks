@@ -15,9 +15,9 @@ public class ConfigTest extends TestCase {
         Gson gson = new Gson();
 
         List<Config.EmergencyContact> contacts = new ArrayList<>();
-        contacts.add(new Config.EmergencyContact("Linda Zheng", "7133675720"));
-        contacts.add(new Config.EmergencyContact("Dawsona Botsford", "1234567890"));
-        contacts.add(new Config.EmergencyContact("Berta Lovejoy", "1234567890"));
+        contacts.add(new Config.EmergencyContact("Linda Zheng", "7133675720", null, true, true));
+        contacts.add(new Config.EmergencyContact("Dawsona Botsford", "1234567890", null, true, true));
+        contacts.add(new Config.EmergencyContact("Berta Lovejoy", "1234567890", null, true, true));
 
         List<Config.Statement> statements = new ArrayList<>();
         Map<String, String> options = new HashMap<>();
