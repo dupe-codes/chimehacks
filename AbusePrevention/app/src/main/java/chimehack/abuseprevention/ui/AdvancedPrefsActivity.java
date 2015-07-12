@@ -314,7 +314,7 @@ public class AdvancedPrefsActivity extends Activity {
             for (Config.Statement statement : mConfig.getStatements()) {
                 mData.add(new Item(RowType.ACTION_ROW, statement));
             }
-            mData.add(new Item(RowType.ADD_ACTION_ROW, null));
+            mData.add(new Item(RowType.ADD_ACTION_ROW, R.string.add_action));
             notifyDataSetInvalidated();
         }
 
@@ -419,17 +419,12 @@ public class AdvancedPrefsActivity extends Activity {
                     Log.i("CONTACT NAME", contact.getName());
                     Log.i("CONTACT PHONE", contact.getPhoneNumber());
                     break;
-                case ADD_CONTACT_ROW:
-                    // No data for this one.
-                    break;
                 case ACTION_ROW:
                     // TODO(linda)
                     break;
                 case ADD_ACTION_ROW:
-                    // No data for this one.
-                    break;
+                case ADD_CONTACT_ROW:
                 case ACTIONS_HEADER_ROW:
-                    // Fall though.
                 case CONTACTS_HEADER_ROW:
                     TextView text = (TextView) convertView.findViewById(android.R.id.title);
                     text.setText((Integer) mData.get(position).getData());

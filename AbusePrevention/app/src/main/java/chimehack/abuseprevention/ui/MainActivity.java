@@ -1,5 +1,6 @@
 package chimehack.abuseprevention.ui;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -84,6 +85,11 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(false);
+        }
 
         mTodoList = (SwipeMenuListView) findViewById(R.id.todoList);
 
@@ -179,11 +185,10 @@ public class MainActivity extends Activity {
         switch (id) {
             case R.id.action_add_task:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Add a task");
-                builder.setMessage("What do you want to do");
+                builder.setTitle(getString(R.string.add_task));
                 final EditText inputField = new EditText(this);
                 builder.setView(inputField);
-                builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String task = inputField.getText().toString();

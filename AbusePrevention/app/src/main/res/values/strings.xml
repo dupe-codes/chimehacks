@@ -25,4 +25,6 @@ Additional notes from %7$s: %8$s]]></string>
     <string name="header_actions">Actions</string>
     <string name="add_contact">Add a contact</string>
     <string name="add_action">Add an action</string>
+    <string name="add_task">Add a task</string>
+    <string name="add">Add</string>
 </resources>
