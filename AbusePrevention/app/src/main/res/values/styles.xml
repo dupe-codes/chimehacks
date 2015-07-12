@@ -32,13 +32,11 @@
     </style>
 
     <style name="CanCallToggleButton">
-        <item name="android:background">
-        </item>
+        <item name="android:background">@drawable/call_toggle</item>
     </style>
 
     <style name="CanMessageToggleButton">
-        <item name="android:background">
-        </item>
+        <item name="android:background">@drawable/message_toggle</item>
     </style>
 
 </resources>
