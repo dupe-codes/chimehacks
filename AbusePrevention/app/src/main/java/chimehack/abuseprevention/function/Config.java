@@ -153,10 +153,6 @@ public class Config {
         emergencyContacts.add(contact);
     }
 
-    public void addStatement(Statement statement) {
-        statements.add(statement);
-    }
-
     public void removeEmergencyContact(int contactId) {
         emergencyContacts.remove(contactId);
     }
