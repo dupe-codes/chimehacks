@@ -8,11 +8,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/todoList"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        tools:listitem="@layout/task_view"></ListView>
+        tools:listitem="@layout/task_view"/>
 
 </LinearLayout>

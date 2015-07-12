@@ -20,7 +20,7 @@
         android:textSize="20dp"
         android:layout_margin="5dp"/>
 
-    <Button
+<!--    <Button
         android:id="@+id/doneButton"
         style="@style/TodoButton"
         android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:onClick="onDoneButtonClick"
-        android:text="Done" />
+        android:text="Done" /> -->
 
     <View
         android:id="@+id/rightHandBorder"
