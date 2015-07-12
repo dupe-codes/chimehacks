@@ -8,74 +8,143 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import chimehack.abuseprevention.R;
+import chimehack.abuseprevention.function.Config;
 
 public class AdvancedPrefsActivity extends ListActivity {
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.advanced_prefs);
-//    }
+    Config mConfig;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AdvancedPrefsAdapter mAdapter = new AdvancedPrefsAdapter();
-        mAdapter.addSeparatorItem("Name");
-        mAdapter.addSeparatorItem("Address");
-        mAdapter.addSeparatorItem("Contacts");
-        mAdapter.addSeparatorItem("Actions");
+        mConfig = getConfig();
+
+        AdvancedPrefsAdapter mAdapter = new AdvancedPrefsAdapter(this, mConfig);
         setListAdapter(mAdapter);
     }
 
-    private class AdvancedPrefsAdapter extends BaseAdapter {
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        switch (AdvancedPrefsAdapter.RowType.values()[getListAdapter().getItemViewType(position)]) {
+            case NAME_ROW:
+                break;
+            case ADDRESS_ROW:
+                break;
+            case CONTACT_ROW:
+                break;
+            case ADD_CONTACT_ROW:
+                
+                break;
+            case ACTION_ROW:
+                break;
+            case ADD_ACTION_ROW:
+                break;
+        }
+    }
 
-        private static final int TYPE_NAME_HEADER_ROW = 0;
-        private static final int TYPE_NAME_ROW = 1;
-        private static final int TYPE_ADDRESS_ROW = 2;
-        private static final int TYPE_CONTACT_ROW = 3;
-        private static final int TYPE_ADD_CONTACT_ROW = 4;
-        private static final int TYPE_ACTION_ROW = 5;
-        private static final int TYPE_ADD_ACTION_ROW = 6;
+    private Config getConfig() {
+        Set<Config.EmergencyContact> contacts = new HashSet<>();
+        contacts.add(new Config.EmergencyContact("Linda Zheng", "7133675720"));
+        contacts.add(new Config.EmergencyContact("Dawsona Botsford", "1234567890"));
+        contacts.add(new Config.EmergencyContact("Berta Lovejoy", "1234567890"));
 
-//        private static final int TYPE_MAX_COUNT = TYPE_SEPARATOR + 1;
+        Set<Config.Statement> statements = new HashSet<>();
+        Map<String, String> options = new HashMap<>();
+        statements.add(new Config.Statement(
+                Config.Statement.Trigger.SHAKE_ONCE, Config.Statement.Action.CALL_POLICE, options));
+        Map<String, String> options2 = new HashMap<>();
+        options2.put("number", "7897897890");
+        statements.add(new Config.Statement(
+                Config.Statement.Trigger.STOP_STOP_STOP, Config.Statement.Action.CALL_CUSTOM_NUMBER,
+                options2));
 
-        private ArrayList mData = new ArrayList();
+        return new Config(contacts, statements);
+    }
+
+    private static class AdvancedPrefsAdapter extends BaseAdapter {
+        private enum RowType {
+            NAME_ROW(R.layout.name_row),
+            ADDRESS_ROW(R.layout.address_row),
+            CONTACT_ROW(R.layout.contact_row),
+            ADD_CONTACT_ROW(R.layout.add_contact_row),
+            ACTION_ROW(R.layout.action_row),
+            ADD_ACTION_ROW(R.layout.add_action_row);
+
+            int layoutId;
+
+            RowType(int layoutId) {
+                this.layoutId = layoutId;
+            }
+
+            public int getLayoutId() {
+                return layoutId;
+            }
+        }
+
+        private static class Item {
+            private final RowType rowType;
+            private final Object data;
+
+            public Item(RowType rowType, Object data) {
+                this.rowType = rowType;
+                this.data = data;
+            }
+
+            public RowType getRowType() {
+                return rowType;
+            }
+
+            public Object getData() {
+                return data;
+            }
+        }
+
+        private static final int MAX_COUNT = 7;
+
+        private Config mConfig;
+        private List<Item> mData = new ArrayList<>();
         private LayoutInflater mInflater;
 
-        private TreeSet mSeparatorsSet = new TreeSet();
-
-        public AdvancedPrefsAdapter() {
-            mInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        public AdvancedPrefsAdapter(Context context, Config config) {
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mConfig = config;
+            populate();
         }
 
-        public void addItem(final String item) {
-            mData.add(item);
-            notifyDataSetChanged();
-        }
-
-        public void addSeparatorItem(final String item) {
-            mData.add(item);
-            // save separator position
-            mSeparatorsSet.add(mData.size() - 1);
-            notifyDataSetChanged();
+        private void populate() {
+            mData.add(new Item(RowType.NAME_ROW, null));
+            mData.add(new Item(RowType.ADDRESS_ROW, null));
+            for (Config.EmergencyContact contact : mConfig.emergencyContacts) {
+                mData.add(new Item(RowType.CONTACT_ROW, contact));
+            }
+            mData.add(new Item(RowType.ADD_CONTACT_ROW, null));
+            for (Config.Statement statement : mConfig.statements) {
+                mData.add(new Item(RowType.ACTION_ROW, statement));
+            }
+            mData.add(new Item(RowType.ADD_ACTION_ROW, null));
+            notifyDataSetInvalidated();
         }
 
         @Override
         public int getItemViewType(int position) {
-//            return mSeparatorsSet.contains(position) ? TYPE_SEPARATOR : TYPE_ITEM;
-            return position;
+            return mData.get(position).getRowType().ordinal();
         }
 
         @Override
         public int getViewTypeCount() {
-            return 7;
+            return RowType.values().length;
         }
 
         @Override
@@ -84,7 +153,7 @@ public class AdvancedPrefsActivity extends ListActivity {
         }
 
         @Override
-        public Object getItem(int position) {
+        public Item getItem(int position) {
             return mData.get(position);
         }
 
@@ -95,53 +164,56 @@ public class AdvancedPrefsActivity extends ListActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            int type = getItemViewType(position);
+            RowType type = RowType.values()[getItemViewType(position)];
             Log.i("AdvancedPrefs", "getView " + position + " " + convertView + " type = " + type);
+
+
             if (convertView == null) {
-                holder = new ViewHolder();
                 switch (type) {
-                    case TYPE_NAME_HEADER_ROW:
-                        convertView = mInflater.inflate(R.layout.header_row, null);
-                        holder.textView = (TextView)convertView.findViewById(R.id.nameHeader);
-                        break;
-                    case TYPE_NAME_ROW:
+                    case NAME_ROW:
                         convertView = mInflater.inflate(R.layout.name_row, null);
-                        holder.textView = (TextView)convertView.findViewById(R.id.nameField);
                         break;
-                    case TYPE_ADDRESS_ROW:
+                    case ADDRESS_ROW:
                         convertView = mInflater.inflate(R.layout.address_row, null);
-                        holder.textView = (TextView)convertView.findViewById(R.id.addressField);
                         break;
-//                    case TYPE_CONTACT_ROW:
-//                        convertView = mInflater.inflate(R.layout.contact_row, null);
-//                        holder.textView = (TextView)convertView.findViewById(R.id.addressField);
-//                        break;
-//                    case TYPE_ADD_CONTACT_ROW:
-//                        convertView = mInflater.inflate(R.layout.add_contact_row, null);
-//                        holder.textView = (TextView)convertView.findViewById(R.id);
-//                        break;
-//                    case TYPE_ACTION_ROW:
-//                        convertView = mInflater.inflate(R.layout.action_row, null);
-//                        holder.textView = (TextView)convertView.findViewById(R.id.textSeparator);
-//                        break;
-//                    case TYPE_ADD_ACTION_ROW:
-//                        convertView = mInflater.inflate(R.layout.add_action_row, null);
-//                        holder.textView = (TextView)convertView.findViewById(R.id.textSeparator);
-//                        break;
+                    case CONTACT_ROW:
+                        convertView = mInflater.inflate(R.layout.contact_row, null);
+                        break;
+                    case ADD_CONTACT_ROW:
+                        convertView = mInflater.inflate(R.layout.add_contact_row, null);
+                        break;
+                    case ACTION_ROW:
+                        convertView = mInflater.inflate(R.layout.action_row, null);
+                        break;
+                    case ADD_ACTION_ROW:
+                        convertView = mInflater.inflate(R.layout.add_action_row, null);
+                        break;
                 }
-                convertView.setTag(holder);
             } else {
-                holder = (ViewHolder)convertView.getTag();
+                switch (type) {
+                    case NAME_ROW:
+                        TextView name = (TextView) convertView.findViewById(R.id.nameField);
+                        name.setText("Linda Zheng");
+                        break;
+                    case ADDRESS_ROW:
+                        TextView address = (TextView) convertView.findViewById(R.id.addressField);
+                        address.setText("123 Address Road");
+                        break;
+                    case CONTACT_ROW:
+                        // TODO(linda)
+                        break;
+                    case ADD_CONTACT_ROW:
+                        // No data for this one.
+                        break;
+                    case ACTION_ROW:
+                        // TODO(linda)
+                        break;
+                    case ADD_ACTION_ROW:
+                        // No data for this one.
+                        break;
+                }
             }
-            holder.textView.setText(mData.get(position));
             return convertView;
         }
-
     }
-
-    public static class ViewHolder {
-        public TextView textView;
-    }
-
 }
