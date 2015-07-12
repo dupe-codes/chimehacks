@@ -1,7 +1,9 @@
 package chimehack.abuseprevention.ui;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -9,11 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.content.Intent;
 import android.net.Uri;
 import android.database.Cursor;
+import android.widget.ToggleButton;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,11 +83,10 @@ public class AdvancedPrefsActivity extends ListActivity {
 
                 Uri contactData = data.getData();
                 Cursor c = managedQuery(contactData, null, null, null, null); // Deprecated.. oh well!
-                String id = "";
                 String cNumber = "";
                 String name = "";
                 if (c.moveToFirst()) {
-                    id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+                    String id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
                     Log.d("AdvancedPrefsActivity", "Contacts id is " + id);
                     String hasPhone = c.getString(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
                     if (hasPhone.equalsIgnoreCase("1")) {
@@ -96,8 +102,53 @@ public class AdvancedPrefsActivity extends ListActivity {
                     name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                     Log.d("AdvancedPrefsActivity", "Contacts name is: " + name);
                 }
-                Config.EmergencyContact newContact = new Config.EmergencyContact(name, cNumber);
-                mConfig.emergencyContacts.add(newContact);
+                final String contactName = name;
+                final String contactNum = cNumber;
+
+                // Ask if the contact can call or text
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Set Policy");
+                builder.setMessage("Set what " + name + " should do in an emergency.");
+                LinearLayout layout = new LinearLayout(this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                final ToggleButton canText = new ToggleButton(this);
+                canText.setChecked(true);
+                canText.setText("OK to text me");
+                canText.setTextOn("OK to text me");
+                canText.setTextOff("Not OK to text me");
+                final ToggleButton canCall = new ToggleButton(this);
+                canCall.setChecked(true);
+                canCall.setText("OK to text me");
+                canCall.setTextOn("OK to call me");
+                canCall.setTextOff("Not OK to call me");
+
+                layout.addView(canText);
+                layout.addView(canCall);
+                builder.setView(layout);
+
+                builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        boolean allowTexting = false;
+                        if (canText.isChecked()) {
+                            Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can text");
+                            allowTexting = true;
+                        }
+                        boolean allowCalling = false;
+                        if (canCall.isChecked()) {
+                            Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can call");
+                            allowCalling = true;
+                        }
+                        Config.EmergencyContact newContact = new Config.EmergencyContact(contactName, contactNum);
+                        newContact.canText = allowTexting;
+                        newContact.canCall = allowCalling;
+                        mConfig.emergencyContacts.add(newContact);
+
+                        //TODO(Oleg) Write new config to preferences
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.create().show();
                 //TODO(Oleg) Write new config to preferences
                 break;
             default:
