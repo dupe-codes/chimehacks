@@ -189,17 +189,16 @@ public class AdvancedPrefsActivity extends ListActivity {
 
     private static class AdvancedPrefsAdapter extends BaseAdapter {
         private enum RowType {
+            NAME_HEADER_ROW(R.layout.name_header_row),
             NAME_ROW(R.layout.name_row),
+            ADDRESS_HEADER_ROW(R.layout.address_header_row),
             ADDRESS_ROW(R.layout.address_row),
+            CONTACTS_HEADER_ROW(R.layout.header_row),
             CONTACT_ROW(R.layout.contact_row),
             ADD_CONTACT_ROW(R.layout.add_row),
+            ACTIONS_HEADER_ROW(R.layout.header_row),
             ACTION_ROW(R.layout.action_row),
-            ADD_ACTION_ROW(R.layout.add_row),
-            HEADER_ROW(R.layout.name_header_row);
-//            ADDRESS_HEADER_ROW(R.layout.address_header_row),
-//            CONTACT_HEADER_ROW(R.layout.contact_header_row),
-//            ACTION_HEADER_ROW(R.layout.action_header_row);
-
+            ADD_ACTION_ROW(R.layout.add_row);
             int layoutId;
 
             RowType(int layoutId) {
@@ -244,30 +243,20 @@ public class AdvancedPrefsActivity extends ListActivity {
         }
 
         private void populate() {
-            mData.add(new Item(RowType.HEADER_ROW, "Name"));
+            mData.add(new Item(RowType.NAME_HEADER_ROW, null));
             mData.add(new Item(RowType.NAME_ROW, null));
-            mData.add(new Item(RowType.HEADER_ROW, "Address"));
+            mData.add(new Item(RowType.ADDRESS_HEADER_ROW, null));
             mData.add(new Item(RowType.ADDRESS_ROW, null));
-            mData.add(new Item(RowType.HEADER_ROW, R.string.header_emergency_contacts));
+            mData.add(new Item(RowType.CONTACTS_HEADER_ROW, R.string.header_emergency_contacts));
             for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
                 mData.add(new Item(RowType.CONTACT_ROW, contact));
             }
-//<<<<<<< HEAD
             mData.add(new Item(RowType.ADD_CONTACT_ROW, R.string.add_contact));
-            mData.add(new Item(RowType.HEADER_ROW, R.string.header_actions));
+            mData.add(new Item(RowType.ACTIONS_HEADER_ROW, R.string.header_actions));
             for (Config.Statement statement : mConfig.getStatements()) {
                 mData.add(new Item(RowType.ACTION_ROW, statement));
             }
-            mData.add(new Item(RowType.ADD_CONTACT_ROW, R.string.add_action));
-//=======
-//            mData.add(new Item(RowType.CONTACT_HEADER_ROW, null));
-//            mData.add(new Item(RowType.ADD_CONTACT_ROW, null));
-//            for (Config.Statement statement : mConfig.getStatements()) {
-//                mData.add(new Item(RowType.ACTION_ROW, statement));
-//            }
-//            mData.add(new Item(RowType.ACTION_HEADER_ROW, null));
-//            mData.add(new Item(RowType.ADD_ACTION_ROW, null));
-//>>>>>>> contacts stuff
+            mData.add(new Item(RowType.ADD_ACTION_ROW, null));
             notifyDataSetInvalidated();
         }
 
@@ -347,51 +336,46 @@ public class AdvancedPrefsActivity extends ListActivity {
                             }
                         });
                         break;
-                    case CONTACT_ROW:
-                        int id = position - 3;
-                        Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(id);
+                }
+            }
 
-                        break;
-                    case ACTION_ROW:
-                        break;
-                }
-            } else {
-                switch (type) {
-                    case NAME_ROW:
-                        TextView name = (TextView) convertView.findViewById(R.id.nameField);
-                        name.setText(mConfig.getName());
-                        break;
-                    case ADDRESS_ROW:
-                        TextView address = (TextView) convertView.findViewById(R.id.addressField);
-                        address.setText(mConfig.getAddress());
-                        break;
-                    case CONTACT_ROW:
-                        Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(position - 3);
-                        TextView contactName = (TextView) convertView.findViewById(R.id.contact_name);
-                        contactName.setText(contact.name);
-                        TextView contactNumber = (TextView) convertView.findViewById(R.id.contact_phone);
-                        contactNumber.setText(contact.phoneNumber);
-                        convertView.findViewById(R.id.contact_can_call).setActivated(contact.canCall);
-                        convertView.findViewById(R.id.contact_can_message).setActivated(contact.canText);
-                        Log.i("TOGGLE CALL", contact.canCall ? "YES" : "NO");
-                        Log.i("TOGGLE TEXT", contact.canText ? "YES" : "NO");
-                        Log.i("CONTACT NAME", contact.getName());
-                        Log.i("CONTACT PHONE", contact.getPhoneNumber());
-                        break;
-                    case ADD_CONTACT_ROW:
-                        // No data for this one.
-                        break;
-                    case ACTION_ROW:
-                        // TODO(linda)
-                        break;
-                    case ADD_ACTION_ROW:
-                        // No data for this one.
-                        break;
-                    case HEADER_ROW:
-                        TextView text = (TextView) convertView.findViewById(android.R.id.title);
-                        text.setText((Integer) mData.get(position).getData());
-                        break;
-                }
+            switch (type) {
+                case NAME_ROW:
+                    TextView name = (TextView) convertView.findViewById(R.id.nameField);
+                    name.setText(mConfig.getName());
+                    break;
+                case ADDRESS_ROW:
+                    TextView address = (TextView) convertView.findViewById(R.id.addressField);
+                    address.setText(mConfig.getAddress());
+                    break;
+                case CONTACT_ROW:
+                    Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(position - 5);
+                    TextView contactName = (TextView) convertView.findViewById(R.id.contact_name);
+                    contactName.setText(contact.name);
+                    TextView contactNumber = (TextView) convertView.findViewById(R.id.contact_phone);
+                    contactNumber.setText(contact.phoneNumber);
+                    convertView.findViewById(R.id.contact_can_call).setActivated(contact.canCall);
+                    convertView.findViewById(R.id.contact_can_message).setActivated(contact.canText);
+                    Log.i("TOGGLE CALL", contact.canCall ? "YES" : "NO");
+                    Log.i("TOGGLE TEXT", contact.canText ? "YES" : "NO");
+                    Log.i("CONTACT NAME", contact.getName());
+                    Log.i("CONTACT PHONE", contact.getPhoneNumber());
+                    break;
+                case ADD_CONTACT_ROW:
+                    // No data for this one.
+                    break;
+                case ACTION_ROW:
+                    // TODO(linda)
+                    break;
+                case ADD_ACTION_ROW:
+                    // No data for this one.
+                    break;
+                case ACTIONS_HEADER_ROW:
+                    // Fall though.
+                case CONTACTS_HEADER_ROW:
+                    TextView text = (TextView) convertView.findViewById(android.R.id.title);
+                    text.setText((Integer) mData.get(position).getData());
+                    break;
             }
             return convertView;
         }
