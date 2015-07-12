@@ -490,11 +490,18 @@ public class AdvancedPrefsActivity extends Activity {
                     int numContacts = mConfig.getEmergencyContacts().size();
                     Config.Statement action = mConfig.getStatements().get(position - 7 - numContacts);
                     TextView actionView = (TextView)convertView.findViewById(R.id.action_message);
+
                     Config.Statement.Trigger trigger = action.getTrigger();
-                    String triggerStr = trigger != null ? trigger.toString() : "";
+                    String triggerStr = "";
+                    if (trigger != null) {
+                        triggerStr = mContext.getResources().getStringArray(R.array.triggers)[trigger.ordinal()];
+                    }
 
                     Config.Statement.Action response = action.getAction();
-                    String respStr = response != null ? response.toString() : "";
+                    String respStr = "";
+                    if (response != null) {
+                        respStr = mContext.getResources().getStringArray(R.array.actions)[response.ordinal()];
+                    }
 
                     String message = "When\n" + triggerStr + "\nDo\n" + respStr;
                     actionView.setText(message);
