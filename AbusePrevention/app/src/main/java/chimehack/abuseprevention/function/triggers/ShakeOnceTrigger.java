@@ -9,6 +9,7 @@ public class ShakeOnceTrigger implements Trigger {
     @Override
     public boolean isActivated(ChimeService service) {
         // TODO(oleg): implement.
+
         return false;
     }
 }
