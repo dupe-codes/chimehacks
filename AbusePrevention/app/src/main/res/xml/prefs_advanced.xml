@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference android:title="Default Location" />
-    <EditTextPreference android:title="Significant Other Information" />
-    <EditTextPreference android:title="Emergency Contact Name" />
-    <EditTextPreference android:title="Emergency Contact Phone Number" />
-    <EditTextPreference android:title="Emergency Contact Email" />
+    <EditTextPreference
+        android:key="pref_location"
+        android:title="Default Location" />
+    <EditTextPreference
+        android:key="pref_so_name"
+        android:title="Significant Other Name" />
+    <EditTextPreference
+        android:key="pref_contact_name"
+        android:title="Emergency Contact Name" />
+    <EditTextPreference
+        android:key="pref_contact_phone"
+        android:title="Emergency Contact Phone Number" />
+    <EditTextPreference
+        android:key="pref_contact_email"
+        android:title="Emergency Contact Email" />
 
 </PreferenceScreen>
