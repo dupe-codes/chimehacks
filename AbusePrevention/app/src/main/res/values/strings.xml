@@ -14,12 +14,12 @@
     <string name="contact_call_ok">Calling back is OK</string>
 
     <string name="message_template">
-    This is an automated report from %1$s, sent on behalf of %2$s.\n
+    <!--%8$s-->
+    Hi, do you mind if you stop by and drop off the tupperware you borrowed?
     Home address: %3$s\n
     Current estimated coordinates: %4$s\n
     Please %5$s call me.\n
-    Please %6$s text me.\n
-    Additional notes from %7$s: %8$s</string>
+    Please %6$s text me.\n</string>
     <string name="message_template_do">feel free to</string>
     <string name="message_template_do_not">DO NOT</string>
     <string name="header_name">Name</string>

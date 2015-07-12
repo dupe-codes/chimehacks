@@ -112,7 +112,7 @@ public class ChimeService extends Service {
     private void processTriggers(int shakeCount) {
 
         for (Config.Statement statement : mConfig.getStatements()) {
-            Log.d("processTriggers", "Checking statement...");
+            Log.d("processTriggers", "Checking statement... " + statement.getTrigger());
             switch (statement.getTrigger()) {
                 case SHAKE_ONCE:
                     if (shakeCount == 1 || shakeCount == 2) {
