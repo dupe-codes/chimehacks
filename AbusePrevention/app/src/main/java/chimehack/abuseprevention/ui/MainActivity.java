@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         mTodoList = (ListView) findViewById(R.id.todoList);
 
         try {
-            String content = new Scanner(new File(this.getFilesDir(), "todos.json")).useDelimiter("\\Z").next();
+            String content = new Scanner(new File(this.getFilesDir(), "todos3.json")).useDelimiter("\\Z").next();
             try {
                 JSONArray tasks = new JSONArray(new JSONTokener(content));
                 ArrayList<JSONObject> todos = new ArrayList<JSONObject>();
@@ -86,8 +86,22 @@ public class MainActivity extends Activity {
             }
         } catch (IOException e) {
             // react
-            Log.d("MainActivity", "Failed to load tasks");
+            Log.d("MainActivity", "Failed to load tasks, it didn't exist");
             todoAdapter = new TodoAdapter(this, new ArrayList<JSONObject>());
+            String[] prePopulate = new String[]{
+                    "Pick up groceries",
+                    "Check bank account balance",
+                    "Check the mail"
+            };
+            for(String todo : prePopulate) {
+                JSONObject newTask = new JSONObject();
+                try {
+                    newTask.put("task", todo);
+                } catch (org.json.JSONException ex) {
+                    Log.e("MainActivity", "Error prepopulating tasks");
+                }
+                todoAdapter.add(newTask);
+            }
         }
         mTodoList.setAdapter(todoAdapter);
     }
