@@ -20,6 +20,9 @@ import java.util.Map;
 import chimehack.abuseprevention.Constants;
 import chimehack.abuseprevention.R;
 import chimehack.abuseprevention.function.Config;
+import chimehack.abuseprevention.function.actions.CallCustomNumberAction;
+import chimehack.abuseprevention.function.actions.CallPoliceAction;
+import chimehack.abuseprevention.function.actions.TextContactsAction;
 
 /**
  * Background service that handles listening for triggers and performing actions in the background.
@@ -95,31 +98,41 @@ public class ChimeService extends Service {
     }
 
     private void processTriggers(int shakeCount) {
-        for(Config.Statement trigger : mConfig.getStatements()) {
-            switch(trigger.getTrigger()) {
+        for(Config.Statement statement : mConfig.getStatements()) {
+            switch(statement.getTrigger()) {
                 case SHAKE_ONCE:
-                    if (shakeCount == 1) { launchAction(trigger.getAction(), trigger.getOptions());}
+                    if (shakeCount == 1) {
+                        launchAction(statement);
+                    }
                     break;
                 case SHAKE_THREE_TIMES:
-                    if (shakeCount == 3) { launchAction(trigger.getAction(), trigger.getOptions()); }
+                    if (shakeCount == 3) {
+                        launchAction(statement);
+                    }
                     break;
                 default:
                     // Nothing to see here...
-                    return;
+                    break;
             }
         }
     }
 
-    private void launchAction(Config.Statement.Action action, Map<String, String> options) {
-        switch(action) {
+    private void launchAction(Config.Statement statement) {
+        switch(statement.getAction()) {
             case CALL_POLICE:
                 // Call da popo
+                CallPoliceAction callPolice = new CallPoliceAction();
+                callPolice.execute(this, statement, mPrefs);
                 break;
             case CALL_CUSTOM_NUMBER:
                 // Cal dat number
+                CallCustomNumberAction callCustom = new CallCustomNumberAction();
+                callCustom.execute(this, statement, mPrefs);
                 break;
             case TEXT_CONTACTS:
                 // Send out dat text
+                TextContactsAction textContacts = new TextContactsAction();
+                textContacts.execute(this, statement, mPrefs);
                 break;
         }
     }
