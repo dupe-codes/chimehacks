@@ -9,7 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:descendantFocusability="beforeDescendants" />
+        android:descendantFocusability="beforeDescendants"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:drawSelectorOnTop="true" />
 
     <!--<TextView-->
     <!--android:layout_width="match_parent"-->

@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textSize="30sp"
         android:inputType="textPersonName"
-        android:text="Linda Zheng"
-        android:labelFor="@+id/nameField"/>
+        android:labelFor="@+id/nameField"
+        android:textSize="24sp"
+        tools:text="Linda Zheng" />
 </LinearLayout>

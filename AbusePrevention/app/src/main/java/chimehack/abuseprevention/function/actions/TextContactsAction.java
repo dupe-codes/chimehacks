@@ -27,17 +27,17 @@ public class TextContactsAction implements Action {
             String fullName = service.getConfig().getName();
             String homeAddress = service.getConfig().getAddress();
             String currentLocation = "TODO";
-            String canCall = contact.canCall ? service.getString(R.string.message_template_do) :
+            String canCall = contact.getCanCall() ? service.getString(R.string.message_template_do) :
                     service.getString(R.string.message_template_do_not);
-            String canText = contact.canCall ? service.getString(R.string.message_template_do) :
+            String canText = contact.getCanCall() ? service.getString(R.string.message_template_do) :
                     service.getString(R.string.message_template_do_not);
             String firstName = fullName.split("\\s")[0];
-            String additionalMessage = customMessages.get(contact.name);
+            String additionalMessage = customMessages.get(contact.getName());
             String message = String.format(service.getString(R.string.message_template),
                     appName, fullName, homeAddress, currentLocation, canCall, canText, firstName,
                     additionalMessage);
             Log.i(Constants.TAG, "Sending text message: " + message);
-            smsManager.sendTextMessage(contact.phoneNumber, null, message, null, null);
+            smsManager.sendTextMessage(contact.getPhoneNumber(), null, message, null, null);
 //            smsManager.sendTextMessage(); // TODO (linda)
 //=======
 //        StringBuilder stringBuilder = new StringBuilder();

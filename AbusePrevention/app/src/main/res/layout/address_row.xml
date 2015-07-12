@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
+        android:id="@+id/addressField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPostalAddress"
-        android:textSize="30sp"
-        android:id="@+id/addressField"
         android:layout_gravity="center_horizontal"
-        android:text="(some address)"
-        android:labelFor="@+id/addressField"/>
+        android:inputType="textPostalAddress"
+        android:labelFor="@+id/addressField"
+        android:textSize="25sp"
+        tools:text="(some address)" />
 </LinearLayout>

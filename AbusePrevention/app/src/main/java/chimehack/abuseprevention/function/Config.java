@@ -1,5 +1,7 @@
 package chimehack.abuseprevention.function;
 
+import android.net.Uri;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,21 +20,32 @@ import chimehack.abuseprevention.function.triggers.VolumeButtonPatternTrigger;
 public class Config {
 
     public static class EmergencyContact {
-        public String name;
-        public String phoneNumber;
-        public boolean canText;
-        public boolean canCall;
+        private String name;
+        private String phoneNumber;
+        private Uri picture;
+        private boolean canText;
+        private boolean canCall;
 
-        public EmergencyContact(String name, String phoneNumber) {
+        public EmergencyContact(String name, String phoneNumber, Uri picture, boolean canText,
+                                boolean canCall) {
             this.name = name;
             this.phoneNumber = phoneNumber;
+            this.picture = picture;
+            this.canText = canText;
+            this.canCall = canCall;
         }
 
         public String getName() {
             return name;
         }
 
-        public String getPhoneNumber() { return phoneNumber; }
+        public String getPhoneNumber() {
+            return phoneNumber;
+        }
+
+        public Uri getPicture() {
+            return picture;
+        }
 
         public boolean getCanText() {
             return canText;

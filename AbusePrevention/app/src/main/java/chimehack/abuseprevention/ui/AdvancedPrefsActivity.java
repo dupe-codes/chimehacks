@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -65,19 +67,22 @@ public class AdvancedPrefsActivity extends Activity {
         SwipeMenuCreator swipeToDelete = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu swipeMenu) {
-                // create "delete" item
-                SwipeMenuItem deleteItem = new SwipeMenuItem(
-                        getApplicationContext());
-                // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
-                        0x3F, 0x25)));
-                // set item width
-                deleteItem.setWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90,
-                        getResources().getDisplayMetrics()));
-                // set a icon
-                deleteItem.setIcon(android.R.drawable.ic_delete);
-                // add to menu
-                swipeMenu.addMenuItem(deleteItem);
+                if (swipeMenu.getViewType() == AdvancedPrefsAdapter.RowType.CONTACT_ROW.ordinal()
+                        || swipeMenu.getViewType() == AdvancedPrefsAdapter.RowType.ACTION_ROW.ordinal()) {
+                    // create "delete" item
+                    SwipeMenuItem deleteItem = new SwipeMenuItem(
+                            getApplicationContext());
+                    // set item background
+                    deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                            0x3F, 0x25)));
+                    // set item width
+                    deleteItem.setWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90,
+                            getResources().getDisplayMetrics()));
+                    // set a icon
+                    deleteItem.setIcon(android.R.drawable.ic_delete);
+                    // add to menu
+                    swipeMenu.addMenuItem(deleteItem);
+                }
             }
         };
         mListView.setMenuCreator(swipeToDelete);
@@ -133,6 +138,7 @@ public class AdvancedPrefsActivity extends Activity {
                 Cursor c = managedQuery(contactData, null, null, null, null); // Deprecated.. oh well!
                 String cNumber;
                 String name;
+                final Uri picture;
                 if (c.moveToFirst()) {
                     String id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
                     Log.d("AdvancedPrefsActivity", "Contacts id is " + id);
@@ -148,9 +154,14 @@ public class AdvancedPrefsActivity extends Activity {
                     phones.moveToFirst();
                     cNumber = phones.getString(phones.getColumnIndex("data1"));
                     name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                    Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,
+                            Long.parseLong(id));
+                    picture = Uri.withAppendedPath(person,
+                            ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
                     Log.d("AdvancedPrefsActivity", "Contacts name is: " + name);
                     phones.close();
                     Log.d("AdvancedPrefsActivity", "Contacts number is: " + cNumber);
+                    Log.d("AdvancedPrefsActivity", "Contacts picture is: " + picture.toString());
                     final String contactName = name;
                     final String contactNum = cNumber;
 
@@ -188,9 +199,9 @@ public class AdvancedPrefsActivity extends Activity {
                                 Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can call");
                                 allowCalling = true;
                             }
-                            Config.EmergencyContact newContact = new Config.EmergencyContact(contactName, contactNum);
-                            newContact.canText = allowTexting;
-                            newContact.canCall = allowCalling;
+                            Config.EmergencyContact newContact = new Config.EmergencyContact(
+                                    contactName, contactNum, picture, allowTexting, allowCalling);
+
                             mConfig.addEmergencyContact(newContact);
                             mBinder.updateConfig(mConfig);
                             reloadData();
@@ -409,13 +420,18 @@ public class AdvancedPrefsActivity extends Activity {
                 case CONTACT_ROW:
                     Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(position - 5);
                     TextView contactName = (TextView) convertView.findViewById(R.id.contact_name);
-                    contactName.setText(contact.name);
+                    contactName.setText(contact.getName());
                     TextView contactNumber = (TextView) convertView.findViewById(R.id.contact_phone);
-                    contactNumber.setText(contact.phoneNumber);
-                    convertView.findViewById(R.id.contact_can_call).setActivated(contact.canCall);
-                    convertView.findViewById(R.id.contact_can_message).setActivated(contact.canText);
-                    Log.i("TOGGLE CALL", contact.canCall ? "YES" : "NO");
-                    Log.i("TOGGLE TEXT", contact.canText ? "YES" : "NO");
+                    contactNumber.setText(contact.getPhoneNumber());
+                    convertView.findViewById(R.id.contact_can_call).setActivated(contact.getCanCall());
+                    convertView.findViewById(R.id.contact_can_message).setActivated(contact.getCanText());
+                    if (contact.getPicture() != null) {
+                        ((ImageView) convertView.findViewById(R.id.contact_picture)).setImageURI(contact.getPicture());
+                    } else {
+                        ((ImageView) convertView.findViewById(R.id.contact_picture)).setImageResource(android.R.drawable.gallery_thumb);
+                    }
+                    Log.i("TOGGLE CALL", contact.getCanCall() ? "YES" : "NO");
+                    Log.i("TOGGLE TEXT", contact.getCanText() ? "YES" : "NO");
                     Log.i("CONTACT NAME", contact.getName());
                     Log.i("CONTACT PHONE", contact.getPhoneNumber());
                     break;
