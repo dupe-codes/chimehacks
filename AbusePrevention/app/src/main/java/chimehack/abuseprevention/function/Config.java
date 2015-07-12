@@ -90,9 +90,9 @@ public class Config {
          * ... then that.
          */
         public enum Action {
-            CALL_POLICE(CallPoliceAction.class),
+            TEXT_CONTACTS(TextContactsAction.class),
             CALL_CUSTOM_NUMBER(CallCustomNumberAction.class),
-            TEXT_CONTACTS(TextContactsAction.class);
+            CALL_POLICE(CallPoliceAction.class);
 
             private Class<? extends chimehack.abuseprevention.function.actions.Action> clazz;
 

@@ -42,8 +42,7 @@
         <ListView
             android:id="@+id/add_action_contacts"
             android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1.0"
+            android:layout_height="120dp"
             tools:listitem="@android:layout/simple_list_item_checked" />
 
         <TextView

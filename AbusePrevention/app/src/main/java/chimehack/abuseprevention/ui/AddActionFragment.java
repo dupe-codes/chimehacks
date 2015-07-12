@@ -2,6 +2,7 @@ package chimehack.abuseprevention.ui;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -14,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,24 +72,24 @@ public class AddActionFragment extends DialogFragment {
                         customMessageLabel.setVisibility(View.GONE);
                         contacts.setVisibility(View.GONE);
                         contactsLabel.setVisibility(View.GONE);
-                        customMessage.setVisibility(View.GONE);
-                        customMessageLabel.setVisibility(View.GONE);
+                        customNumber.setVisibility(View.GONE);
+                        customNumberLabel.setVisibility(View.GONE);
                         break;
                     case CALL_CUSTOM_NUMBER:
                         customMessage.setVisibility(View.GONE);
                         customMessageLabel.setVisibility(View.GONE);
                         contacts.setVisibility(View.GONE);
                         contactsLabel.setVisibility(View.GONE);
-                        customMessage.setVisibility(View.VISIBLE);
-                        customMessageLabel.setVisibility(View.VISIBLE);
+                        customNumber.setVisibility(View.VISIBLE);
+                        customNumberLabel.setVisibility(View.VISIBLE);
                         break;
                     case TEXT_CONTACTS:
                         customMessage.setVisibility(View.VISIBLE);
                         customMessageLabel.setVisibility(View.VISIBLE);
                         contacts.setVisibility(View.VISIBLE);
                         contactsLabel.setVisibility(View.VISIBLE);
-                        customMessage.setVisibility(View.GONE);
-                        customMessageLabel.setVisibility(View.GONE);
+                        customNumber.setVisibility(View.GONE);
+                        customNumberLabel.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -108,6 +108,7 @@ public class AddActionFragment extends DialogFragment {
         }
         contacts.setAdapter(new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_multiple_choice, contactsArray));
+        contacts.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         // Add button.
         final Button save = (Button) view.findViewById(R.id.add_action_ok);
@@ -142,6 +143,12 @@ public class AddActionFragment extends DialogFragment {
                 config.addStatement(statement);
 
                 ((AdvancedPrefsActivity) getActivity()).reloadData();
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismiss();
+                    }
+                });
             }
         });
 
