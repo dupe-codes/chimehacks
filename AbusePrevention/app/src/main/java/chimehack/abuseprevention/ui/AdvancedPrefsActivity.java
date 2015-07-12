@@ -27,6 +27,10 @@ public class AdvancedPrefsActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AdvancedPrefsAdapter mAdapter = new AdvancedPrefsAdapter();
+        mAdapter.addSeparatorItem("Name");
+        mAdapter.addSeparatorItem("Address");
+        mAdapter.addSeparatorItem("Contacts");
+        mAdapter.addSeparatorItem("Actions");
         setListAdapter(mAdapter);
     }
 
@@ -42,7 +46,7 @@ public class AdvancedPrefsActivity extends ListActivity {
 
 //        private static final int TYPE_MAX_COUNT = TYPE_SEPARATOR + 1;
 
-        private ArrayList<String> mData = new ArrayList<>();
+        private ArrayList mData = new ArrayList();
         private LayoutInflater mInflater;
 
         private TreeSet mSeparatorsSet = new TreeSet();
@@ -80,7 +84,7 @@ public class AdvancedPrefsActivity extends ListActivity {
         }
 
         @Override
-        public String getItem(int position) {
+        public Object getItem(int position) {
             return mData.get(position);
         }
 
