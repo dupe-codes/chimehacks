@@ -19,6 +19,8 @@ public class Config {
     public static class EmergencyContact {
         public String name;
         public String phoneNumber;
+        public boolean canText;
+        public boolean canCall;
 
         public EmergencyContact(String name, String phoneNumber) {
             this.name = name;
@@ -75,6 +77,18 @@ public class Config {
             this.trigger = trigger;
             this.action = action;
             this.options = options;
+        }
+
+        public Trigger getTrigger() {
+            return trigger;
+        }
+
+        public Action getAction() {
+            return action;
+        }
+
+        public Map<String, String> getOptions() {
+            return options;
         }
     }
 

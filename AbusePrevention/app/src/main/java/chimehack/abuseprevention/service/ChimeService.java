@@ -33,7 +33,7 @@ public class ChimeService extends Service {
      */
     public class LocalBinder extends Binder {
         void updateSettings() {
-            mConfig = getConfigFromPrefs();
+            mConfig = readConfigFromPrefs();
         }
 
         Config getSettings() {
@@ -48,10 +48,14 @@ public class ChimeService extends Service {
 
         // Initialize.
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mConfig = getConfigFromPrefs();
+        mConfig = readConfigFromPrefs();
     }
 
-    private Config getConfigFromPrefs() {
+    public Config getConfig() {
+        return mConfig;
+    }
+
+    private Config readConfigFromPrefs() {
         String config = mPrefs.getString(getString(R.string.pref_config), "");
         if (TextUtils.isEmpty(config)) {
             return new Config(new HashSet<Config.EmergencyContact>(),
