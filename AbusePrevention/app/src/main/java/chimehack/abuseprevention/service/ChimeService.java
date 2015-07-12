@@ -75,7 +75,7 @@ public class ChimeService extends Service {
             @Override
             public void onShake(int count) {
                 // TODO: Do whatever should happen when a shake has been registered here
-                Log.d("ShakeListener", "A shake happened woahhhhh!");
+//                Log.d("ShakeListener", "A shake happened woahhhhh!");
             }
         });
 

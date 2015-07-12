@@ -1,8 +1,8 @@
 package chimehack.abuseprevention.ui;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,22 +10,30 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,35 +42,68 @@ import chimehack.abuseprevention.R;
 import chimehack.abuseprevention.function.Config;
 import chimehack.abuseprevention.service.ChimeService;
 
-public class AdvancedPrefsActivity extends ListActivity {
+public class AdvancedPrefsActivity extends Activity {
 
     private Config mConfig;
     private ChimeService.LocalBinder mBinder;
     private boolean mIsBound = false;
 
+    SwipeMenuListView mListView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.advanced_prefs);
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.advanced_prefs);
         }
 
+        mListView = (SwipeMenuListView) findViewById(android.R.id.list);
+        SwipeMenuCreator swipeToDelete = new SwipeMenuCreator() {
+            @Override
+            public void create(SwipeMenu swipeMenu) {
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90,
+                        getResources().getDisplayMetrics()));
+                // set a icon
+                deleteItem.setIcon(android.R.drawable.ic_delete);
+                // add to menu
+                swipeMenu.addMenuItem(deleteItem);
+            }
+        };
+        mListView.setMenuCreator(swipeToDelete);
+        mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int i, SwipeMenu swipeMenu, int i1) {
+                mConfig.removeEmergencyContact(i - 5);
+                mBinder.updateConfig(mConfig);
+                reloadData();
+                return true;
+            }
+        });
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (AdvancedPrefsAdapter.RowType.values()[parent.getAdapter().getItemViewType(position)]) {
+                    case ADD_CONTACT_ROW:
+                        pickFromContacts();
+                        break;
+                    case ADD_ACTION_ROW:
+                        break;
+                }
+            }
+        });
+
         bindService(new Intent(this, ChimeService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        switch (AdvancedPrefsAdapter.RowType.values()[getListAdapter().getItemViewType(position)]) {
-            case ADD_CONTACT_ROW:
-                pickFromContacts();
-                break;
-            case ADD_ACTION_ROW:
-                break;
-        }
     }
 
     static final int PICK_CONTACT = 1;
@@ -89,23 +130,26 @@ public class AdvancedPrefsActivity extends ListActivity {
                 Uri contactData = data.getData();
                 //noinspection deprecation
                 Cursor c = managedQuery(contactData, null, null, null, null); // Deprecated.. oh well!
-                String cNumber = "";
-                String name = "";
+                String cNumber;
+                String name;
                 if (c.moveToFirst()) {
                     String id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
                     Log.d("AdvancedPrefsActivity", "Contacts id is " + id);
                     String hasPhone = c.getString(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-                    if (hasPhone.equalsIgnoreCase("1")) {
-                        Cursor phones = getContentResolver().query(
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
-                                null, null
-                        );
-                        phones.moveToFirst();
-                        cNumber = phones.getString(phones.getColumnIndex("data1"));
-                        phones.close();
-                        Log.d("AdvancedPrefsActivity", "Contacts number is: " + cNumber);
+                    if (!hasPhone.equalsIgnoreCase("1")) {
+                        return;
                     }
+                    Cursor phones = getContentResolver().query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id,
+                            null, null
+                    );
+                    phones.moveToFirst();
+                    cNumber = phones.getString(phones.getColumnIndex("data1"));
+                    name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                    Log.d("AdvancedPrefsActivity", "Contacts name is: " + name);
+                    phones.close();
+                    Log.d("AdvancedPrefsActivity", "Contacts number is: " + cNumber);
                     final String contactName = name;
                     final String contactNum = cNumber;
 
@@ -148,9 +192,7 @@ public class AdvancedPrefsActivity extends ListActivity {
                             newContact.canCall = allowCalling;
                             mConfig.addEmergencyContact(newContact);
                             mBinder.updateConfig(mConfig);
-                            AdvancedPrefsAdapter adapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
-                                    mConfig);
-                            setListAdapter(adapter);
+                            reloadData();
                         }
                     });
                     builder.setNegativeButton("Cancel", null);
@@ -176,9 +218,7 @@ public class AdvancedPrefsActivity extends ListActivity {
             mConfig = mBinder.getConfig();
             mIsBound = true;
             // TODO maybe put in some loading thing before?
-            AdvancedPrefsAdapter adapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
-                    mConfig);
-            setListAdapter(adapter);
+            reloadData();
         }
 
         @Override
@@ -186,6 +226,12 @@ public class AdvancedPrefsActivity extends ListActivity {
             mIsBound = false;
         }
     };
+
+    private void reloadData() {
+        AdvancedPrefsAdapter adapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
+                mConfig);
+        mListView.setAdapter(adapter);
+    }
 
     private static class AdvancedPrefsAdapter extends BaseAdapter {
         private enum RowType {
@@ -239,6 +285,7 @@ public class AdvancedPrefsActivity extends ListActivity {
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
             mConfig = config;
+
             populate();
         }
 

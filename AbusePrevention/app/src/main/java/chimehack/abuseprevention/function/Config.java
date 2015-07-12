@@ -130,6 +130,10 @@ public class Config {
         emergencyContacts.add(contact);
     }
 
+    public void removeEmergencyContact(int contactId) {
+        emergencyContacts.remove(contactId);
+    }
+
     public List<Statement> getStatements() {
         return Collections.unmodifiableList(statements);
     }

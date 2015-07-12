@@ -28,7 +28,7 @@ public class ShakeDetector implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         // TODO: Do math here to decide if motion should be considered shake
-        Log.d("ShakeSensor", "Shake triggered");
+//        Log.d("ShakeSensor", "Shake triggered");
 
         // Uncomment this when onShake has been implemented
         mShakeListener.onShake(mShakeCount);
