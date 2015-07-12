@@ -1,8 +1,14 @@
 package chimehack.abuseprevention.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -18,6 +24,8 @@ import chimehack.abuseprevention.Constants;
 import chimehack.abuseprevention.R;
 import chimehack.abuseprevention.function.Config;
 
+
+
 /**
  * Background service that handles listening for triggers and performing actions in the background.
  */
@@ -28,6 +36,11 @@ public class ChimeService extends Service {
     private SharedPreferences mPrefs;
     private Config mConfig;
     private Gson mGson = new Gson();
+
+    // Tools for handling shake events
+    private SensorManager mSensorMgr;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
 
     /**
      * Class that we can give to activities in order to interact with the service.
@@ -53,6 +66,20 @@ public class ChimeService extends Service {
         // Initialize.
         readConfigFromPrefs();
         Log.i(Constants.TAG, "... done.");
+
+        // Set up shake detection
+        mSensorMgr = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+            @Override
+            public void onShake(int count) {
+                // TODO: Do whatever should happen when a shake has been registered here
+                Log.d("ShakeListener", "A shake happened woahhhhh!");
+            }
+        });
+
+        mSensorMgr.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
     }
 
     public Config getConfig() {
