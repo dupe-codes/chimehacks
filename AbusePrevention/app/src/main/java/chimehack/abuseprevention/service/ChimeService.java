@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -13,9 +14,17 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Map;
 
 import chimehack.abuseprevention.Constants;
 import chimehack.abuseprevention.R;
@@ -33,7 +42,7 @@ public class ChimeService extends Service {
 
     private SharedPreferences mPrefs;
     private Config mConfig;
-    private Gson mGson = new Gson();
+    private Gson mGson;
 
     // Tools for handling shake events
     private SensorManager mSensorMgr;
@@ -60,13 +69,15 @@ public class ChimeService extends Service {
         Log.i(Constants.TAG, "Service started. Initializing...");
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mGson = new GsonBuilder().registerTypeAdapter(Uri.class, new UriSerializer())
+                .registerTypeAdapter(Uri.class, new UriDeserializer()).create();
 
         // Initialize.
         readConfigFromPrefs();
         Log.i(Constants.TAG, "... done.");
 
         // Set up shake detection
-        mSensorMgr = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        mSensorMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mShakeDetector = new ShakeDetector();
         mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
@@ -102,9 +113,9 @@ public class ChimeService extends Service {
 
     private void processTriggers(int shakeCount) {
 
-        for(Config.Statement statement : mConfig.getStatements()) {
+        for (Config.Statement statement : mConfig.getStatements()) {
             Log.d("processTriggers", "Checking statement...");
-            switch(statement.getTrigger()) {
+            switch (statement.getTrigger()) {
                 case SHAKE_ONCE:
                     if (shakeCount == 1) {
                         launchAction(statement);
@@ -126,7 +137,7 @@ public class ChimeService extends Service {
         Log.d("launchAction", "Launching action");
 //        return;
 
-        switch(statement.getAction()) {
+        switch (statement.getAction()) {
             case CALL_POLICE:
                 // Call da popo
                 CallPoliceAction callPolice = new CallPoliceAction();
@@ -148,5 +159,19 @@ public class ChimeService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    public class UriSerializer implements JsonSerializer<Uri> {
+        public JsonElement serialize(Uri src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(src.toString());
+        }
+    }
+
+    public class UriDeserializer implements JsonDeserializer<Uri> {
+        @Override
+        public Uri deserialize(final JsonElement src, final Type srcType,
+                               final JsonDeserializationContext context) throws JsonParseException {
+            return Uri.parse(src.toString());
+        }
     }
 }

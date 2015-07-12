@@ -137,6 +137,10 @@ public class Config {
         return Collections.unmodifiableList(emergencyContacts);
     }
 
+    public void addStatement(Statement statement) {
+        statements.add(statement);
+    }
+
     public void addEmergencyContact(EmergencyContact contact) {
         emergencyContacts.add(contact);
     }

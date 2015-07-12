@@ -3,6 +3,7 @@ package chimehack.abuseprevention.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
@@ -103,6 +104,7 @@ public class AdvancedPrefsActivity extends Activity {
                         pickFromContacts();
                         break;
                     case ADD_ACTION_ROW:
+                        addAction();
                         break;
                 }
             }
@@ -110,6 +112,11 @@ public class AdvancedPrefsActivity extends Activity {
 
         bindService(new Intent(this, ChimeService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
+    }
+
+    private void addAction() {
+        AddActionFragment fragment = AddActionFragment.newInstance();
+        fragment.show(getFragmentManager(), "add_action");
     }
 
     static final int PICK_CONTACT = 1;
@@ -249,10 +256,14 @@ public class AdvancedPrefsActivity extends Activity {
         }
     };
 
-    private void reloadData() {
+    void reloadData() {
         AdvancedPrefsAdapter adapter = new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
                 mConfig);
         mListView.setAdapter(adapter);
+    }
+
+    public Config getConfig() {
+        return mConfig;
     }
 
     private static class AdvancedPrefsAdapter extends BaseAdapter {
