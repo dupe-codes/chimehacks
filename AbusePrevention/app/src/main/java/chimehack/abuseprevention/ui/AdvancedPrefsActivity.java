@@ -88,6 +88,10 @@ public class AdvancedPrefsActivity extends ListActivity {
         switch (reqCode) {
             case PICK_CONTACT:
                 // Handle the contact they picked here
+                if (data == null) {
+                    // user canceled
+                    return;
+                }
 
                 Uri contactData = data.getData();
                 //noinspection deprecation
@@ -109,61 +113,54 @@ public class AdvancedPrefsActivity extends ListActivity {
                         phones.close();
                         Log.d("AdvancedPrefsActivity", "Contacts number is: " + cNumber);
                     }
-                    name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    Log.d("AdvancedPrefsActivity", "Contacts name is: " + name);
+                    final String contactName = name;
+                    final String contactNum = cNumber;
+
+                    // Ask if the contact can call or text
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Set Policy");
+                    builder.setMessage("Set what " + name + " should do in an emergency.");
+                    LinearLayout layout = new LinearLayout(this);
+                    layout.setOrientation(LinearLayout.VERTICAL);
+                    final ToggleButton canText = new ToggleButton(this);
+                    canText.setChecked(true);
+                    canText.setText("OK to text me");
+                    canText.setTextOn("OK to text me");
+                    canText.setTextOff("Not OK to text me");
+                    final ToggleButton canCall = new ToggleButton(this);
+                    canCall.setChecked(true);
+                    canCall.setText("OK to call me");
+                    canCall.setTextOn("OK to call me");
+                    canCall.setTextOff("Not OK to call me");
+
+                    layout.addView(canText);
+                    layout.addView(canCall);
+                    builder.setView(layout);
+
+                    builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            boolean allowTexting = false;
+                            if (canText.isChecked()) {
+                                Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can text");
+                                allowTexting = true;
+                            }
+                            boolean allowCalling = false;
+                            if (canCall.isChecked()) {
+                                Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can call");
+                                allowCalling = true;
+                            }
+                            Config.EmergencyContact newContact = new Config.EmergencyContact(contactName, contactNum);
+                            newContact.canText = allowTexting;
+                            newContact.canCall = allowCalling;
+                            mConfig.addEmergencyContact(newContact);
+                            mBinder.updateConfig(mConfig);
+                            ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", null);
+                    builder.create().show();
                 }
-                final String contactName = name;
-                final String contactNum = cNumber;
-
-                // Ask if the contact can call or text
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Set Policy");
-                builder.setMessage("Set what " + name + " should do in an emergency.");
-                LinearLayout layout = new LinearLayout(this);
-                layout.setOrientation(LinearLayout.VERTICAL);
-                final ToggleButton canText = new ToggleButton(this);
-                canText.setChecked(true);
-                canText.setText("OK to text me");
-                canText.setTextOn("OK to text me");
-                canText.setTextOff("Not OK to text me");
-                final ToggleButton canCall = new ToggleButton(this);
-                canCall.setChecked(true);
-                canCall.setText("OK to call me");
-                canCall.setTextOn("OK to call me");
-                canCall.setTextOff("Not OK to call me");
-
-                layout.addView(canText);
-                layout.addView(canCall);
-                builder.setView(layout);
-
-                builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean allowTexting = false;
-                        if (canText.isChecked()) {
-                            Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can text");
-                            allowTexting = true;
-                        }
-                        boolean allowCalling = false;
-                        if (canCall.isChecked()) {
-                            Log.d("AdvancedPrefsActivity", "Contact " + contactName + " can call");
-                            allowCalling = true;
-                        }
-                        Config.EmergencyContact newContact =
-                                new Config.EmergencyContact(contactName, contactNum);
-                        newContact.canText = allowTexting;
-                        newContact.canCall = allowCalling;
-                        mConfig.addEmergencyContact(newContact);
-                        mBinder.updateConfig(mConfig);
-                        setListAdapter(new AdvancedPrefsAdapter(AdvancedPrefsActivity.this,
-                                mConfig));
-                    }
-                });
-                builder.setNegativeButton("Cancel", null);
-                builder.create().show();
-                break;
-            default:
-                // Nothing to see here
         }
     }
 
@@ -356,7 +353,15 @@ public class AdvancedPrefsActivity extends ListActivity {
                         address.setText(mConfig.getAddress());
                         break;
                     case CONTACT_ROW:
-                        // TODO(linda)
+                        Config.EmergencyContact contact = mConfig.getEmergencyContacts().get(position - 2);
+                        TextView contactName = (TextView) convertView.findViewById(R.id.contact_name);
+                        contactName.setText(contact.name);
+                        TextView contactNumber = (TextView) convertView.findViewById(R.id.contact_phone);
+                        contactNumber.setText(contact.phoneNumber);
+                        convertView.findViewById(R.id.contact_can_call).setActivated(contact.canCall);
+                        convertView.findViewById(R.id.contact_can_message).setActivated(contact.canText);
+                        Log.i("TOGGLE CALL", contact.canCall ? "YES" : "NO");
+                        Log.i("TOGGLE TEXT", contact.canText ? "YES" : "NO");
                         break;
                     case ADD_CONTACT_ROW:
                         // No data for this one.
