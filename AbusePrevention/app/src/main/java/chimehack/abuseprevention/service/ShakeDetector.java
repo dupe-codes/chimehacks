@@ -27,11 +27,20 @@ public class ShakeDetector implements SensorEventListener {
         void onShake(int count);
     }
 
-    public void test() {
+    public void checkShaking(final int currNumber) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // ???
+                if(currNumber < mShakeCount) {
+                    Log.d("ShakeTimer", "More shakes occurred");
+                    checkShaking(mShakeCount);
+                    return;
+                } else {
+                    Log.d("ShakeTimer", "No more shakes occurred, processing triggers...");
+                    mShakeListener.onShake(mShakeCount);
+                    mShakeCount = 0;
+                    return;
+                }
             }
         }, 2000);
     }
@@ -58,13 +67,18 @@ public class ShakeDetector implements SensorEventListener {
 
                 // Process and reset shake count after 3 seconds of no shakes
                 // FIXME: Does this only process once shaking is done like intended?
-                if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
+                /*if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
                     mShakeListener.onShake(mShakeCount);
                     mShakeCount = 0;
-                }
+                } */
 
                 mShakeTimestamp = now;
                 mShakeCount++;
+
+                if (mShakeCount == 1) {
+                    // Start timer to wait for shakes to stop
+                    checkShaking(mShakeCount);
+                }
             }
         }
     }
