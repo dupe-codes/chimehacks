@@ -29,6 +29,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -110,7 +111,7 @@ public class AdvancedPrefsActivity extends Activity {
 
         bindService(new Intent(this, ChimeService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
-    }
+}
 
     static final int PICK_CONTACT = 1;
 
@@ -209,6 +210,28 @@ public class AdvancedPrefsActivity extends Activity {
                     });
                     builder.setNegativeButton("Cancel", null);
                     builder.create().show();
+
+                    ((ToggleButton)mListView.findViewById(R.id.contact_can_call)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
+                                if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
+                                    contact.setCanCall(isChecked);
+                                }
+                            }
+                        }
+                    });
+
+                    ((ToggleButton)mListView.findViewById(R.id.contact_can_message)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
+                                if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
+                                    contact.setCanText(isChecked);
+                                }
+                            }
+                        }
+                    });
                 }
         }
     }
@@ -423,8 +446,8 @@ public class AdvancedPrefsActivity extends Activity {
                     contactName.setText(contact.getName());
                     TextView contactNumber = (TextView) convertView.findViewById(R.id.contact_phone);
                     contactNumber.setText(contact.getPhoneNumber());
-                    convertView.findViewById(R.id.contact_can_call).setActivated(contact.getCanCall());
-                    convertView.findViewById(R.id.contact_can_message).setActivated(contact.getCanText());
+                    ((ToggleButton) convertView.findViewById(R.id.contact_can_call)).setChecked(contact.getCanCall());
+                    ((ToggleButton) convertView.findViewById(R.id.contact_can_message)).setChecked(contact.getCanText());
                     if (contact.getPicture() != null) {
                         ((ImageView) convertView.findViewById(R.id.contact_picture)).setImageURI(contact.getPicture());
                     } else {
@@ -432,6 +455,7 @@ public class AdvancedPrefsActivity extends Activity {
                     }
                     Log.i("TOGGLE CALL", contact.getCanCall() ? "YES" : "NO");
                     Log.i("TOGGLE TEXT", contact.getCanText() ? "YES" : "NO");
+
                     Log.i("CONTACT NAME", contact.getName());
                     Log.i("CONTACT PHONE", contact.getPhoneNumber());
                     break;

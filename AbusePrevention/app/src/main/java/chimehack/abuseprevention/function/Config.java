@@ -54,6 +54,14 @@ public class Config {
         public boolean getCanCall() {
             return canCall;
         }
+
+        public void setCanCall(boolean canCall) {
+            this.canCall = canCall;
+        }
+
+        public void setCanText(boolean canText) {
+            this.canText = canText;
+        }
     }
 
     public static class Statement {
