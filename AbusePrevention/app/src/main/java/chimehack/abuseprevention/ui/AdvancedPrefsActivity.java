@@ -210,29 +210,32 @@ public class AdvancedPrefsActivity extends Activity {
                     });
                     builder.setNegativeButton("Cancel", null);
                     builder.create().show();
-
-                    ((ToggleButton)mListView.findViewById(R.id.contact_can_call)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
-                                if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
-                                    contact.setCanCall(isChecked);
-                                }
-                            }
-                        }
-                    });
-
-                    ((ToggleButton)mListView.findViewById(R.id.contact_can_message)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
-                                if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
-                                    contact.setCanText(isChecked);
-                                }
-                            }
-                        }
-                    });
                 }
+        }
+
+        if (mListView.findViewById(R.id.contact_can_call) != null) {
+            ((ToggleButton) mListView.findViewById(R.id.contact_can_call)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
+                        if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
+                            contact.setCanCall(isChecked);
+                        }
+                    }
+                }
+            });
+        }
+        if (mListView.findViewById(R.id.contact_can_message) != null) {
+            ((ToggleButton) mListView.findViewById(R.id.contact_can_message)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    for (Config.EmergencyContact contact : mConfig.getEmergencyContacts()) {
+                        if (contact.getName().equals(((TextView) mListView.findViewById(R.id.contact_name)).getText())) {
+                            contact.setCanText(isChecked);
+                        }
+                    }
+                }
+            });
         }
     }
 
