@@ -3,7 +3,6 @@ package chimehack.abuseprevention.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
@@ -91,7 +90,14 @@ public class AdvancedPrefsActivity extends Activity {
         mListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int i, SwipeMenu swipeMenu, int i1) {
-                mConfig.removeEmergencyContact(i - 5);
+                if (mListView.getAdapter().getItemViewType(i)
+                        == AdvancedPrefsAdapter.RowType.CONTACT_ROW.ordinal()) {
+                    // TODO: handle what happens when a person is removed for existing actions.
+                    mConfig.removeEmergencyContact(i - 5);
+                } else if (mListView.getAdapter().getItemViewType(i)
+                        == AdvancedPrefsAdapter.RowType.ACTION_ROW.ordinal()) {
+                    mConfig.removeStatement(i - 7 - mConfig.getEmergencyContacts().size());
+                }
                 mBinder.updateConfig(mConfig);
                 reloadData();
                 return true;

@@ -157,6 +157,10 @@ public class Config {
         emergencyContacts.remove(contactId);
     }
 
+    public void removeStatement(int pos) {
+        statements.remove(pos);
+    }
+
     public List<Statement> getStatements() {
         return Collections.unmodifiableList(statements);
     }
