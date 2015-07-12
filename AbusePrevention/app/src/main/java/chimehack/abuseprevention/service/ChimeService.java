@@ -115,7 +115,7 @@ public class ChimeService extends Service {
             Log.d("processTriggers", "Checking statement...");
             switch (statement.getTrigger()) {
                 case SHAKE_ONCE:
-                    if (shakeCount == 1) {
+                    if (shakeCount == 1 || shakeCount == 2) {
                         launchAction(statement);
                     }
                     break;
@@ -132,7 +132,7 @@ public class ChimeService extends Service {
     }
 
     private void launchAction(Config.Statement statement) {
-        Log.d("launchAction", "Launching action");
+        Log.d("launchAction", "Launching action: " + statement.getAction());
 
         switch (statement.getAction()) {
             case CALL_POLICE:

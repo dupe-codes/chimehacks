@@ -34,7 +34,7 @@ public class TextContactsAction implements Action {
             String canText = contact.getCanCall() ? service.getString(R.string.message_template_do) :
                     service.getString(R.string.message_template_do_not);
             String firstName = fullName.split("\\s")[0];
-            String additionalMessage = customMessages.get(contact.getName());
+            String additionalMessage = customMessages.get(contact.getName()) == null ? "" : customMessages.get(contact.getName());
             String message = String.format(service.getString(R.string.message_template),
                     appName, fullName, homeAddress, currentLocation, canCall, canText, firstName,
                     additionalMessage);
