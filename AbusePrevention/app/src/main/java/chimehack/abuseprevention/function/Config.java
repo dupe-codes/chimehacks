@@ -32,9 +32,7 @@ public class Config {
             return name;
         }
 
-        public String getPhoneNumber() {
-            return phoneNumber;
-        }
+        public String getPhoneNumber() { return phoneNumber; }
 
         public boolean getCanText() {
             return canText;

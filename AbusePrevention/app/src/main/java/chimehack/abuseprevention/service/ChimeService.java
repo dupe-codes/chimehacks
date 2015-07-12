@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
@@ -18,13 +15,11 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Map;
 
 import chimehack.abuseprevention.Constants;
 import chimehack.abuseprevention.R;
 import chimehack.abuseprevention.function.Config;
-
-
 
 /**
  * Background service that handles listening for triggers and performing actions in the background.
@@ -74,8 +69,7 @@ public class ChimeService extends Service {
         mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
             @Override
             public void onShake(int count) {
-                // TODO: Do whatever should happen when a shake has been registered here
-//                Log.d("ShakeListener", "A shake happened woahhhhh!");
+                processTriggers(count);
             }
         });
 
@@ -98,6 +92,36 @@ public class ChimeService extends Service {
 
     private void writeConfigToPrefs() {
         mPrefs.edit().putString(getString(R.string.pref_config), mGson.toJson(mConfig)).apply();
+    }
+
+    private void processTriggers(int shakeCount) {
+        for(Config.Statement trigger : mConfig.getStatements()) {
+            switch(trigger.getTrigger()) {
+                case SHAKE_ONCE:
+                    if (shakeCount == 1) { launchAction(trigger.getAction(), trigger.getOptions());}
+                    break;
+                case SHAKE_THREE_TIMES:
+                    if (shakeCount == 3) { launchAction(trigger.getAction(), trigger.getOptions()); }
+                    break;
+                default:
+                    // Nothing to see here...
+                    return;
+            }
+        }
+    }
+
+    private void launchAction(Config.Statement.Action action, Map<String, String> options) {
+        switch(action) {
+            case CALL_POLICE:
+                // Call da popo
+                break;
+            case CALL_CUSTOM_NUMBER:
+                // Cal dat number
+                break;
+            case TEXT_CONTACTS:
+                // Send out dat text
+                break;
+        }
     }
 
     @Override
