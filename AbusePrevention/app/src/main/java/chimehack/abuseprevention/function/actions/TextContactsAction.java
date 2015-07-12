@@ -28,7 +28,7 @@ public class TextContactsAction implements Action {
             stringBuilder.append("Please " + (contact.canCall ? "feel free to " : "DO NOT ") + "call me.\n");
             stringBuilder.append("Please " + (contact.canText ? "feel free to " : "DO NOT ") + "text me.\n");
             stringBuilder.append("Additional notes from Linda: " + customMessages.get(contact.name));
-            smsManager.sendTextMessage();
+//            smsManager.sendTextMessage(); // TODO (linda)
 
         }
     }
