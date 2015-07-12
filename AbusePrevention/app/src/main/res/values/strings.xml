@@ -33,4 +33,6 @@ Additional notes from %7$s: %8$s]]></string>
     <string name="add_action_contacts">Select contacts</string>
     <string name="add_action_custom_message">Additional note</string>
     <string name="add_action_title">Add action</string>
+    <string name="add_action_do">Do the following</string>
+    <string name="add_action_custom_number">Custom emergency number</string>
 </resources>

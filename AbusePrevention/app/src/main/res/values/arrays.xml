@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Must be in the same order as the enum! -->
+    <!-- TODO(oleg): address this -->
     <string-array name="triggers">
         <item>Shake phone 3 times</item>
     </string-array>
-    <string-array name="trigger_values">
-        <item>shake_3</item>
+    <string-array name="actions">
+        <item>Text the selected contacts</item>
+        <item>Auto-dial an emergency number</item>
+        <item>Auto-dial the police</item>
     </string-array>
 </resources>
