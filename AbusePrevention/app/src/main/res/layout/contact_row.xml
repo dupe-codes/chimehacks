@@ -10,17 +10,19 @@
         android:layout_height="wrap_content"
         android:background="@drawable/white_ripple"
         android:orientation="horizontal"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:padding="6dp">
+        android:paddingBottom="6dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="6dp"
+        android:paddingTop="6dp">
 
         <ImageView
             android:id="@+id/contact_picture"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:src="@android:drawable/ic_menu_gallery" />
+            android:src="@android:drawable/ic_menu_gallery"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -33,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 tools:text="Oleg Vaskevich" />
 
             <TextView
@@ -60,8 +62,8 @@
             style="@style/CanMessageToggleButton"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginTop="15dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
             android:checked="false" />
 
     </LinearLayout>
