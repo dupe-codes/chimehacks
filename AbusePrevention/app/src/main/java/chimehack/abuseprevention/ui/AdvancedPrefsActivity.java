@@ -474,7 +474,11 @@ public class AdvancedPrefsActivity extends Activity {
                     Log.i("CONTACT PHONE", contact.getPhoneNumber());
                     break;
                 case ACTION_ROW:
-                    // TODO(linda)
+                    int numContacts = mConfig.getEmergencyContacts().size();
+                    Config.Statement action = mConfig.getStatements().get(position - 7 - numContacts);
+                    TextView actionView = (TextView)convertView.findViewById(R.id.action_message);
+                    //String message = "When\n" +
+
                     break;
                 case ADD_ACTION_ROW:
                 case ADD_CONTACT_ROW:
