@@ -1,7 +1,6 @@
 package chimehack.abuseprevention.function;
 
-import android.os.Bundle;
-
+import java.util.Map;
 import java.util.Set;
 
 import chimehack.abuseprevention.function.actions.CallCustomNumberAction;
@@ -70,9 +69,9 @@ public class Config {
 
         Trigger trigger;
         Action action;
-        Bundle options;
+        Map<String, String> options;
 
-        public Statement(Trigger trigger, Action action, Bundle options) {
+        public Statement(Trigger trigger, Action action, Map<String, String> options) {
             this.trigger = trigger;
             this.action = action;
             this.options = options;
