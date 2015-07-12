@@ -12,14 +12,22 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import java.io.IOException;
 import java.util.List;
 import android.content.Context;
 import android.view.ViewGroup;
 import android.view.View;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.util.Scanner;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import chimehack.abuseprevention.R;
 
@@ -63,16 +71,26 @@ public class MainActivity extends Activity {
 
         mTodoList = (ListView) findViewById(R.id.todoList);
 
-        // TODO: Load up todos saved in json file on the phone
-        ArrayList<JSONObject> todos = new ArrayList<JSONObject>();
-        JSONObject test = new JSONObject();
         try {
-            test.put("task", "this is a test");
-        } catch (org.json.JSONException e) {
-            Log.d("MainActivity", "Oops, exception in test");
+            // TODO: Load up todos saved in json file on the phone
+            String content = new Scanner(new File(this.getFilesDir(), "todos.json")).useDelimiter("\\Z").next();
+            try {
+                JSONArray tasks = new JSONArray(new JSONTokener(content));
+                ArrayList<JSONObject> todos = new ArrayList<JSONObject>();
+                for(int i = 0; i < tasks.length(); i++){
+                    todos.add(tasks.getJSONObject(i));
+                }
+                todoAdapter = new TodoAdapter(this, todos);
+                Log.d("MainActivity", "Loaded tasks");
+            } catch (org.json.JSONException e) {
+                Log.e("MainActivity", "Error loading todo file");
+                todoAdapter = new TodoAdapter(this, new ArrayList<JSONObject>());
+            }
+        } catch (IOException e) {
+            // react
+            Log.d("MainActivity", "Failed to load tasks");
+            todoAdapter = new TodoAdapter(this, new ArrayList<JSONObject>());
         }
-        todos.add(test);
-        todoAdapter = new TodoAdapter(this, todos);
         mTodoList.setAdapter(todoAdapter);
     }
 
@@ -102,7 +120,17 @@ public class MainActivity extends Activity {
                         String task = inputField.getText().toString();
                         Log.d("MainActivity", task);
 
+                        JSONObject newTodo = new JSONObject();
+                        try {
+                            newTodo.put("task", task);
+                        } catch (org.json.JSONException e) {
+                            Log.d("MainActivity", "Failed to add task");
+                        }
+                        todoAdapter.add(newTodo);
 
+                        // Save current list of tasks
+                        String currTasks = todoAdapter.mTodos.toString();
+                        saveToFile(currTasks);
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -114,6 +142,19 @@ public class MainActivity extends Activity {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    public void saveToFile(String toWrite) {
+        try {
+            File saveFile = new File((this).getFilesDir(), "todos.json");
+            if (!saveFile.exists()) saveFile.createNewFile();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(saveFile));
+            writer.write(toWrite);
+            writer.close();
+            Log.d("MainActivity", "Wrote out to file");
+        } catch (IOException e) {
+            Log.e("MainActivity", "Unable to write out todos save file");
         }
     }
 }
