@@ -4,6 +4,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.util.FloatMath;
 import android.util.Log;
 
@@ -11,7 +12,7 @@ public class ShakeDetector implements SensorEventListener {
 
     // Settings for shake threshold and such
     private static final float SHAKE_THRESHOLD_GRAVITY = 2.7F;
-    private static final int SHAKE_SLOP_TIME_MS = 500;
+    private static final int SHAKE_SLOP_TIME_MS = 100;
     private static final int SHAKE_COUNT_RESET_TIME_MS = 3000;
 
     private OnShakeListener mShakeListener;
@@ -24,6 +25,15 @@ public class ShakeDetector implements SensorEventListener {
 
     public interface OnShakeListener {
         void onShake(int count);
+    }
+
+    public void test() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // ???
+            }
+        }, 2000);
     }
 
     @Override
@@ -39,7 +49,6 @@ public class ShakeDetector implements SensorEventListener {
             // gForce close to 1 when no movement
             float gForce = FloatMath.sqrt(gX*gX + gY*gY + gZ*gZ);
             if (gForce > SHAKE_THRESHOLD_GRAVITY) {
-                Log.d("ShakeSensor", "Shake triggered");
                 final long now = System.currentTimeMillis();
 
                 // ignore shake events too close to each other (500ms) FIXME: Do this?
