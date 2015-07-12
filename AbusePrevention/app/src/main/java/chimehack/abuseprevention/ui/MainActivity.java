@@ -55,7 +55,6 @@ public class MainActivity extends Activity {
             }
 
             TextView task = (TextView)convertView.findViewById(R.id.taskTextView);
-            //Button done = (Button)convertView.findViewById(R.id.doneButton);
 
             JSONObject todo = mTodos.get(position);
             task.setText(todo.optString("task", "Unknown"));
@@ -72,7 +71,6 @@ public class MainActivity extends Activity {
         mTodoList = (ListView) findViewById(R.id.todoList);
 
         try {
-            // TODO: Load up todos saved in json file on the phone
             String content = new Scanner(new File(this.getFilesDir(), "todos.json")).useDelimiter("\\Z").next();
             try {
                 JSONArray tasks = new JSONArray(new JSONTokener(content));
@@ -145,6 +143,9 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * Saves the current tasks to persistent file storage
+     */
     public void saveToFile(String toWrite) {
         try {
             File saveFile = new File((this).getFilesDir(), "todos.json");
@@ -155,6 +156,29 @@ public class MainActivity extends Activity {
             Log.d("MainActivity", "Wrote out to file");
         } catch (IOException e) {
             Log.e("MainActivity", "Unable to write out todos save file");
+        }
+    }
+
+    public void onDoneButtonClick(View view) {
+        View v = (View)view.getParent();
+        TextView taskTextView = (TextView)v.findViewById(R.id.taskTextView);
+        String task = taskTextView.getText().toString();
+        for(int i = 0; i < todoAdapter.mTodos.size(); i++){
+            JSONObject storedTask = todoAdapter.mTodos.get(i);
+            String storedTodo = "";
+            try {
+                storedTodo = (String)storedTask.get("task");
+            } catch (org.json.JSONException e) {
+                // React
+                return;
+            }
+            if (storedTodo.equals(task)) {
+                todoAdapter.remove(storedTask);
+                // Save current list of tasks
+                String currTasks = todoAdapter.mTodos.toString();
+                saveToFile(currTasks);
+                return;
+            }
         }
     }
 }
